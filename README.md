@@ -13,10 +13,16 @@ This project is for combi students who are struggling to put together a good Ind
 
 3. Modify the application.properties file to match your configuration.
 
-4. Run the Spring Boot project. You should now be able to send GET requests to `localhost:8080/api/schedule/class_schedule` with in the body of the request a JSON array with the course ID's of the courses that you would like to take.
+4. Run the Spring Boot project. 
+
+5. You should now be able to send GET requests to:
    
-   > JSON array example: [1, 2, 3, 4, 5]
+   > `localhost:8080/api/schedule/class_schedule`
+   
+   with in the body of the request a JSON array with the course ID's of the courses that you would like to take, e.g.
+   
+   > [7, 1, 5, 42, 6]
 
 ## License
 
-Everything in this project is licensed under the [GNU General Public License version 2](https://opensource.org/licenses/gpl-2.0.php)
+   Everything in this project is licensed under the [GNU General Public License version 2](https://opensource.org/licenses/gpl-2.0.php)
