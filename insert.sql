@@ -4,7 +4,7 @@ SET search_path TO isp_class_schedule;
 CREATE TEMPORARY TABLE temp_lessons (
     start_timestamp     TIMESTAMP       NOT NULL,
     end_timestamp       TIMESTAMP       NOT NULL,
-    course_name    		VARCHAR(200)    NOT NULL,
+    course_name    	VARCHAR(200)    NOT NULL,
     class_group_name    VARCHAR(100)    NOT NULL
 ) ON COMMIT DROP;
 
