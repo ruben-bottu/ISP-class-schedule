@@ -21,6 +21,11 @@ public class ClassScheduleRestController {
     @Autowired
     private LessonRepository lessonRepo;
 
+    @GetMapping("/class_schedule")
+    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Integer> courseIds) {
+        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
+    }
+
     @GetMapping("/overview")
     public List<String> overview() {
         return Arrays.asList("blazz", "foobar");
@@ -28,6 +33,11 @@ public class ClassScheduleRestController {
 
     @GetMapping("/courses")
     public Iterable<Course> allCourses() {
+        return courseRepo.findAll();
+    }
+
+    @GetMapping("/courses_minimal")
+    public Iterable<Course> allCoursesMinimal() {
         return courseRepo.findAll();
     }
 
@@ -117,11 +127,6 @@ public class ClassScheduleRestController {
         //List<Integer> courseIds = Arrays.asList(1, 2, 3, 4, 5);
         return lessonRepo.getCombinationsWithCollisionCountJson(rowLimit, courseIds);
     }*/
-
-    @GetMapping("/class_schedule")
-    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Integer> courseIds) {
-        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
-    }
 
     @GetMapping("/int_list")
     public List<Integer> intList(@RequestBody List<Integer> ints) {

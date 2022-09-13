@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface LessonRepository extends PagingAndSortingRepository<Lesson, Integer> {
 
+    @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
+    String getCombinationsWithCollisionCountJson(int rowLimit, List<Integer> courseIds);
+
     @Query(value = "SELECT * FROM isp_class_schedule.lessons", nativeQuery = true)
     List<Lesson> getLessons();
 
@@ -49,9 +52,6 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Int
 
     @Query(value = "SELECT count_collisions(?1)", nativeQuery = true)
     int countCollisions(String courseIdsClassGroupIds);
-
-    @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
-    String getCombinationsWithCollisionCountJson(int rowLimit, List<Integer> courseIds);
 
     /*@Query(value = "SELECT variadic_test(?1, ?2)", nativeQuery = true)
     String variadicTest(int firstParam, List<Integer> ints);*/

@@ -12,6 +12,8 @@ public interface CourseRepository extends PagingAndSortingRepository<Course, Int
     /*@Query(value = "SELECT CAST (pg_typeof(?1) AS text)", nativeQuery = true)
     String testMethod(List<Course> strings);*/
 
+
+
     @Query(nativeQuery = true, value = """
             CREATE TEMPORARY TABLE IF NOT EXISTS selected_lessons AS
                 SELECT id, start_timestamp, end_timestamp
