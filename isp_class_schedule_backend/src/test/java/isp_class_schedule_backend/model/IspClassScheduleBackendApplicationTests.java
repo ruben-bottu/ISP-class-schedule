@@ -1,4 +1,4 @@
-package isp_class_schedule_backend;
+package isp_class_schedule_backend.model;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,5 +9,4 @@ class IspClassScheduleBackendApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

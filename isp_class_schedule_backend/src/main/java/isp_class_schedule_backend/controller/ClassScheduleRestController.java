@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +21,6 @@ public class ClassScheduleRestController {
 
     @Autowired
     private LessonRepository lessonRepo;
-
-    @GetMapping("/class_schedule")
-    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Integer> courseIds) {
-        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
-    }
 
     @GetMapping("/overview")
     public List<String> overview() {
@@ -71,22 +67,31 @@ public class ClassScheduleRestController {
         return lessonRepo.count();
     }
 
-    @GetMapping("/bla")
+    /*@GetMapping("/bla")
     public List<Integer> testMethod() {
         return List.of(lessonRepo.testMethod(List.of(
                 new Object[]{1, 3},
                 new Object[]{3, 3},
                 new Object[]{4, 4},
                 new Object[]{5, 4})));
-    }
+    }*/
+
+    /*@GetMapping("/bla")
+    public int testMethod() {
+        return lessonRepo.testMethod(List.of(
+                new int[]{1, 3},
+                new int[]{3, 3},
+                new int[]{4, 4},
+                new int[]{5, 4}));
+    }*/
 
     @GetMapping("/old_count_collisions")
-    public List<Integer> oldCountCollisions() {
-        return List.of(lessonRepo.oldCountCollisions(List.of(
+    public int oldCountCollisions() {
+        return lessonRepo.oldCountCollisions(List.of(
                 new CourseIdClassGroupId(1, 3),
                 new CourseIdClassGroupId(3, 3),
                 new CourseIdClassGroupId(4, 4),
-                new CourseIdClassGroupId(5, 4))));
+                new CourseIdClassGroupId(5, 4)));
     }
 
     @GetMapping("/sizeOfGiven")
@@ -131,5 +136,50 @@ public class ClassScheduleRestController {
     @GetMapping("/int_list")
     public List<Integer> intList(@RequestBody List<Integer> ints) {
         return ints;
+    }
+
+    // TODO
+    /*@GetMapping("/array_test")
+    public List<Integer> arrayTest() {
+        List<Integer> result = lessonRepo.arrayTest();
+        int bla = 5;
+        System.out.println(bla);
+        return result;
+    }*/
+
+    @GetMapping("/class_schedule")
+    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Integer> courseIds) {
+        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
+    }
+
+    /*@GetMapping("/bla")
+    public List<Integer> testMethod() {
+        return List.of(lessonRepo.testMethod(List.of(
+                new Object[]{1, 3},
+                new Object[]{3, 3},
+                new Object[]{4, 4},
+                new Object[]{5, 4})));
+    }*/
+
+    @GetMapping("/count_overlaps")
+    public int countOverlaps() { // TODO For the service: don't forget if (size == 1) return 0;
+        // (1,2),(2,1),(3,1),(5,4)
+        var course1 = new Course(1, "bla", Collections.emptyList());
+        var classGroup1 = new ClassGroup(2, "foo", Collections.emptyList());
+        var course2 = new Course(2, "bla", Collections.emptyList());
+        var classGroup2 = new ClassGroup(1, "foo", Collections.emptyList());
+        var course3 = new Course(3, "bla", Collections.emptyList());
+        var classGroup3 = new ClassGroup(1, "foo", Collections.emptyList());
+        var course4 = new Course(5, "bla", Collections.emptyList());
+        var classGroup4 = new ClassGroup(4, "foo", Collections.emptyList());
+
+        var pair1 = new CourseAndClassGroupDTO(course1, classGroup1);
+        var pair2 = new CourseAndClassGroupDTO(course2, classGroup2);
+        var pair3 = new CourseAndClassGroupDTO(course3, classGroup3);
+        var pair4 = new CourseAndClassGroupDTO(course4, classGroup4);
+
+        List<CourseAndClassGroupDTO> list = List.of(pair1, pair2, pair3, pair4);
+
+        return lessonRepo.countOverlaps(list);
     }
 }

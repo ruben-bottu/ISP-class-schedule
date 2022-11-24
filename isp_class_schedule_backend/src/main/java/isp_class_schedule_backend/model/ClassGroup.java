@@ -21,27 +21,8 @@ public class ClassGroup {
     @NotBlank(message = "name.is.missing")
     private String name;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Lesson> lessons;
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ClassGroup that = (ClassGroup) o;
-
-        if (id != that.id) return false;
-        if (!name.equals(that.name)) return false;
-        return lessons.equals(that.lessons);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + lessons.hashCode();
-        return result;
-    }
 }

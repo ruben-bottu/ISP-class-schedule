@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LessonRepository extends PagingAndSortingRepository<Lesson, Integer> {
+public interface LessonRepository extends PagingAndSortingRepository<Lesson, Integer>, CustomLessonRepository {
 
     @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
     String getCombinationsWithCollisionCountJson(int rowLimit, List<Integer> courseIds);
@@ -20,13 +20,20 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Int
     @Query(value = "SELECT course_id, class_group_id FROM isp_class_schedule.lessons", nativeQuery = true)
     List<?> getLessonIDs();
 
-    @Query(nativeQuery = true, value = """
+    /*@Query(nativeQuery = true, value = """
                     SELECT count(*)
                     FROM (VALUES ?1) AS sub
             """)
-    int testMethod(List<Object[]> courseClassGroupIDs);
+    int testMethod(List<Object[]> courseClassGroupIDs);*/
+
+    /*@Query(nativeQuery = true, value = """
+                    SELECT count(*)
+                    FROM (VALUES ?1) AS sub
+            """)
+    int testMethod(List<int[]> courseClassGroupIDs);*/
 
     // Since there isn't a pooling connection yet, selected_lessons won't be cleared at the end of the transaction (when the pooling connection closes)
+    //@Modifying
     @Modifying
     @Query(nativeQuery = true, value = """
             CREATE TEMPORARY TABLE IF NOT EXISTS selected_lessons ON COMMIT DELETE ROWS AS
@@ -55,4 +62,19 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Int
 
     /*@Query(value = "SELECT variadic_test(?1, ?2)", nativeQuery = true)
     String variadicTest(int firstParam, List<Integer> ints);*/
+
+    @Query(nativeQuery = true, value = "SELECT CAST(ARRAY [('BOP','ME-1TI/6'), ('Algo', 'ME-2TI/5'), ('POD', 'ME-2TI/3')] AS course_name_class_group_name[])")
+    List<CourseNameClassGroupName> arrayTest();
+
+    /*@Query(nativeQuery = true, value = """
+        WITH selected_lessons AS (
+            SELECT id, start_timestamp, end_timestamp
+            FROM :course_id_class_group_ids INNER JOIN lessons USING (course_id, class_group_id)
+        )
+        SELECT count(*) / 2 AS collision_count
+        FROM selected_lessons s1 INNER JOIN selected_lessons s2 ON s1.id <> s2.id
+        WHERE (s1.start_timestamp, s1.end_timestamp) OVERLAPS
+            (s2.start_timestamp, s2.end_timestamp);
+    """)
+    int countOverlaps(@Param("course_id_class_group_ids") String courseIdClassGroupIds);*/
 }

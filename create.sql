@@ -68,7 +68,9 @@ INSERT INTO lessons (start_timestamp, end_timestamp, course_id, class_group_id) 
 
 
 CREATE TYPE course_id_class_group_id AS (course_id INT, class_group_id INT);
+CREATE TYPE course_name_class_group_name AS (course_name VARCHAR(200), class_group_name VARCHAR(100));
 
+-- Returns the number of collisions / overlaps between the lessons of the selected (course_id, class_group_id) pairs.
 CREATE OR REPLACE FUNCTION count_collisions(combination course_id_class_group_id ARRAY) RETURNS INT
 	AS $$
 	WITH selected_lessons AS (
@@ -81,7 +83,6 @@ CREATE OR REPLACE FUNCTION count_collisions(combination course_id_class_group_id
 		(s2.start_timestamp, s2.end_timestamp);
 	$$ 
 	LANGUAGE SQL;
-	
 
 CREATE OR REPLACE FUNCTION get_class_groups_of_course(course_id INT) RETURNS SETOF course_id_class_group_id
 	AS $$
@@ -91,7 +92,8 @@ CREATE OR REPLACE FUNCTION get_class_groups_of_course(course_id INT) RETURNS SET
 	$$
 	LANGUAGE SQL;
 
-
+-- Constructs the query that will generate all possible combinations of courses and class groups
+-- by CROSS JOIN-ing them all toghether and turning them into arrays for ease of use.
 CREATE OR REPLACE FUNCTION construct_generate_course_class_group_combinations_query(selected_course_ids INT ARRAY) RETURNS TEXT
 	AS $$
 	DECLARE
@@ -110,7 +112,6 @@ CREATE OR REPLACE FUNCTION construct_generate_course_class_group_combinations_qu
 	END;
 	$$ LANGUAGE plpgsql; -- IMMUTABLE
 
-
 CREATE OR REPLACE FUNCTION generate_course_class_group_combinations(course_ids INT ARRAY) RETURNS TABLE(combination course_id_class_group_id ARRAY)
 	AS $$
 	BEGIN
@@ -118,21 +119,29 @@ CREATE OR REPLACE FUNCTION generate_course_class_group_combinations(course_ids I
 	END;
 	$$ LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE FUNCTION get_combinations_with_collision_count(row_limit INT, course_ids INT ARRAY)
-	RETURNS TABLE(collision_count INT, combination course_id_class_group_id ARRAY)
+-- Maps the given course and class group ids to their corresponding names.
+CREATE OR REPLACE FUNCTION map_course_and_class_group_ids_to_names(combination course_id_class_group_id ARRAY) RETURNS course_name_class_group_name ARRAY
 	AS $$
-		SELECT count_collisions(combination), combination
+	SELECT array_agg(CAST ((c.name, cg.name) AS course_name_class_group_name) ORDER BY c.id)
+	FROM unnest(combination) INNER JOIN class_groups cg ON class_group_id = cg.id
+		INNER JOIN courses c ON course_id = c.id
+	$$
+	LANGUAGE SQL;
+
+-- Returns the number of collisions / overlaps of each combination.
+CREATE OR REPLACE FUNCTION get_combinations_with_collision_count(row_limit INT, course_ids INT ARRAY)
+	RETURNS TABLE(collision_count INT, combination course_name_class_group_name ARRAY)
+	AS $$
+		SELECT count_collisions(combination), map_course_and_class_group_ids_to_names(combination)
 		FROM generate_course_class_group_combinations(course_ids) AS combinations
 		ORDER BY 1, 2
 		FETCH FIRST row_limit ROWS ONLY;
 	$$
 	LANGUAGE SQL;
-	
 
-CREATE OR REPLACE FUNCTION get_combinations_with_collision_count_json(row_limit INT, course_ids INT ARRAY) RETURNS TEXT
+CREATE OR REPLACE FUNCTION get_combinations_with_collision_count_json(row_limit INT, VARIADIC course_ids INT ARRAY) RETURNS TEXT
 	AS $$
-		SELECT array_to_json(array_agg(row_to_json(c)))
+		SELECT json_agg(to_json(c))
 		FROM get_combinations_with_collision_count(row_limit, course_ids) AS c
 	$$
 	LANGUAGE SQL;

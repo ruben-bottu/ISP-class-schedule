@@ -28,13 +28,15 @@ public class Lesson {
     private LocalDateTime endTimestamp;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", referencedColumnName = "id") // Should not be necessary
+    @ToString.Exclude
     private Course course;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "class_group_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_group_id", referencedColumnName = "id") // Should not be necessary
+    @ToString.Exclude
     private ClassGroup classGroup;
 
 
@@ -53,20 +55,11 @@ public class Lesson {
 
         Lesson lesson = (Lesson) o;
 
-        if (id != lesson.id) return false;
-        if (!startTimestamp.equals(lesson.startTimestamp)) return false;
-        if (!endTimestamp.equals(lesson.endTimestamp)) return false;
-        if (!course.equals(lesson.course)) return false;
-        return classGroup.equals(lesson.classGroup);
+        return id == lesson.id;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + startTimestamp.hashCode();
-        result = 31 * result + endTimestamp.hashCode();
-        result = 31 * result + course.hashCode();
-        result = 31 * result + classGroup.hashCode();
-        return result;
+        return getClass().hashCode();
     }
 }
