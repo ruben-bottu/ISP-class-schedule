@@ -1,17 +1,9 @@
 package isp_class_schedule_backend.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
-@EqualsAndHashCode
+@Value
 public class CourseAndClassGroupDTO {
-
-    private final Course course;
-    private final ClassGroup classGroup;
-
-    public CourseAndClassGroupDTO(Course course, ClassGroup classGroup) {
-        this.course = course;
-        this.classGroup = classGroup;
-    }
+    CourseDTO course;
+    ClassGroupDTO classGroup;
 }

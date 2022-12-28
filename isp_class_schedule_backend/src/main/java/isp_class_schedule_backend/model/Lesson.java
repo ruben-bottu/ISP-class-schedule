@@ -1,11 +1,13 @@
 package isp_class_schedule_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 public class Lesson {
 
     @Id
-    private int id;
+    private Long id;
 
     @NotNull(message = "start.timestamp.missing")
     @Column(name = "start_timestamp")
@@ -39,7 +41,6 @@ public class Lesson {
     @ToString.Exclude
     private ClassGroup classGroup;
 
-
     public String getCourseName() {
         return (course == null) ? "" : course.getName();
     }
@@ -51,11 +52,9 @@ public class Lesson {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Lesson lesson = (Lesson) o;
-
-        return id == lesson.id;
+        return id != null && Objects.equals(id, lesson.id);
     }
 
     @Override

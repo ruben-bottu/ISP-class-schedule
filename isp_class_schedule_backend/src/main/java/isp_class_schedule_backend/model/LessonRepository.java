@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LessonRepository extends PagingAndSortingRepository<Lesson, Integer>, CustomLessonRepository {
+public interface LessonRepository extends PagingAndSortingRepository<Lesson, Long>, CustomLessonRepository {
 
     @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
-    String getCombinationsWithCollisionCountJson(int rowLimit, List<Integer> courseIds);
+    String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds);
 
     @Query(value = "SELECT * FROM isp_class_schedule.lessons", nativeQuery = true)
     List<Lesson> getLessons();
@@ -64,7 +64,10 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Int
     String variadicTest(int firstParam, List<Integer> ints);*/
 
     @Query(nativeQuery = true, value = "SELECT CAST(ARRAY [('BOP','ME-1TI/6'), ('Algo', 'ME-2TI/5'), ('POD', 'ME-2TI/3')] AS course_name_class_group_name[])")
-    List<CourseNameClassGroupName> arrayTest();
+    List<CourseNameClassGroupNameDTO> arrayTest();
+
+    Long count();
+
 
     /*@Query(nativeQuery = true, value = """
         WITH selected_lessons AS (

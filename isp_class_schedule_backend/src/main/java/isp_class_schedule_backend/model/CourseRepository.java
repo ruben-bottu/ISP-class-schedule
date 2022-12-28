@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CourseRepository extends PagingAndSortingRepository<Course, Integer> {
+public interface CourseRepository extends PagingAndSortingRepository<Course, Long>, CustomCourseRepository {
 
     /*@Query(value = "SELECT CAST (pg_typeof(?1) AS text)", nativeQuery = true)
     String testMethod(List<Course> strings);*/
@@ -30,4 +30,5 @@ public interface CourseRepository extends PagingAndSortingRepository<Course, Int
                   (s2.start_timestamp, s2.end_timestamp)
             """)
     String testMethod(List<String> strings);
+
 }

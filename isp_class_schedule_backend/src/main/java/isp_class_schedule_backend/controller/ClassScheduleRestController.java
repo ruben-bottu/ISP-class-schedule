@@ -2,10 +2,10 @@ package isp_class_schedule_backend.controller;
 
 import isp_class_schedule_backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +16,19 @@ public class ClassScheduleRestController {
     private static final int DEFAULT_RESULT_LIMIT = 20;
     //private static final String STRING_DEFAULT_RESULT_LIMIT = Integer.toString(DEFAULT_RESULT_LIMIT);
 
+    /*@Autowired
+    private ClassScheduleService service;*/
+
     @Autowired
     private CourseRepository courseRepo;
 
     @Autowired
     private LessonRepository lessonRepo;
+
+    @GetMapping("/class_schedule")
+    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Long> courseIds) {
+        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
+    }
 
     @GetMapping("/overview")
     public List<String> overview() {
@@ -29,17 +37,17 @@ public class ClassScheduleRestController {
 
     @GetMapping("/courses")
     public Iterable<Course> allCourses() {
-        return courseRepo.findAll();
+        return courseRepo.findAll(Sort.unsorted());
     }
 
     @GetMapping("/courses_minimal")
     public Iterable<Course> allCoursesMinimal() {
-        return courseRepo.findAll();
+        return courseRepo.findAll(Sort.unsorted());
     }
 
     @GetMapping("/lessons")
     public Iterable<Lesson> allLessons() {
-        return lessonRepo.findAll();
+        return lessonRepo.findAll(Sort.unsorted());
     }
 
     @GetMapping("/lessonIDSelect")
@@ -88,20 +96,20 @@ public class ClassScheduleRestController {
     @GetMapping("/old_count_collisions")
     public int oldCountCollisions() {
         return lessonRepo.oldCountCollisions(List.of(
-                new CourseIdClassGroupId(1, 3),
-                new CourseIdClassGroupId(3, 3),
-                new CourseIdClassGroupId(4, 4),
-                new CourseIdClassGroupId(5, 4)));
+                new CourseIdClassGroupId(1L, 3L),
+                new CourseIdClassGroupId(3L, 3L),
+                new CourseIdClassGroupId(4L, 4L),
+                new CourseIdClassGroupId(5L, 4L)));
     }
 
     @GetMapping("/sizeOfGiven")
     public int sizeOfGiven() {
         //return lessonRepo.countRows("(1,2), (3,1), (4,4)");
         List<CourseIdClassGroupId> lst = List.of(
-                new CourseIdClassGroupId(1, 2),
-                new CourseIdClassGroupId(3, 1),
-                new CourseIdClassGroupId(4, 4),
-                new CourseIdClassGroupId(8, 1));
+                new CourseIdClassGroupId(1L, 2L),
+                new CourseIdClassGroupId(3L, 1L),
+                new CourseIdClassGroupId(4L, 4L),
+                new CourseIdClassGroupId(8L, 1L));
         String joinedIds = lst.stream()
                 .map(CourseIdClassGroupId::toString)
                 .collect(Collectors.joining(","));
@@ -111,10 +119,10 @@ public class ClassScheduleRestController {
     @GetMapping("/count_collisions")
     public Integer countCollisions() {
         List<CourseIdClassGroupId> lst = List.of(
-                new CourseIdClassGroupId(1, 3),
-                new CourseIdClassGroupId(3, 3),
-                new CourseIdClassGroupId(4, 4),
-                new CourseIdClassGroupId(5, 4));
+                new CourseIdClassGroupId(1L, 3L),
+                new CourseIdClassGroupId(3L, 3L),
+                new CourseIdClassGroupId(4L, 4L),
+                new CourseIdClassGroupId(5L, 4L));
         String joinedIds = lst.stream()
                 .map(CourseIdClassGroupId::toString)
                 .collect(Collectors.joining(","));
@@ -147,10 +155,7 @@ public class ClassScheduleRestController {
         return result;
     }*/
 
-    @GetMapping("/class_schedule")
-    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Integer> courseIds) {
-        return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
-    }
+
 
     /*@GetMapping("/bla")
     public List<Integer> testMethod() {
@@ -164,14 +169,14 @@ public class ClassScheduleRestController {
     @GetMapping("/count_overlaps")
     public int countOverlaps() { // TODO For the service: don't forget if (size == 1) return 0;
         // (1,2),(2,1),(3,1),(5,4)
-        var course1 = new Course(1, "bla", Collections.emptyList());
-        var classGroup1 = new ClassGroup(2, "foo", Collections.emptyList());
-        var course2 = new Course(2, "bla", Collections.emptyList());
-        var classGroup2 = new ClassGroup(1, "foo", Collections.emptyList());
-        var course3 = new Course(3, "bla", Collections.emptyList());
-        var classGroup3 = new ClassGroup(1, "foo", Collections.emptyList());
-        var course4 = new Course(5, "bla", Collections.emptyList());
-        var classGroup4 = new ClassGroup(4, "foo", Collections.emptyList());
+        var course1 = new CourseDTO(1L, "bla");
+        var classGroup1 = new ClassGroupDTO(2L, "foo");
+        var course2 = new CourseDTO(2L, "bla");
+        var classGroup2 = new ClassGroupDTO(1L, "foo");
+        var course3 = new CourseDTO(3L, "bla");
+        var classGroup3 = new ClassGroupDTO(1L, "foo");
+        var course4 = new CourseDTO(5L, "bla");
+        var classGroup4 = new ClassGroupDTO(4L, "foo");
 
         var pair1 = new CourseAndClassGroupDTO(course1, classGroup1);
         var pair2 = new CourseAndClassGroupDTO(course2, classGroup2);

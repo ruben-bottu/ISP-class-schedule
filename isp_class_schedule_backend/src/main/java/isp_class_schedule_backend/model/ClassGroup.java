@@ -1,10 +1,13 @@
 package isp_class_schedule_backend.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -16,13 +19,26 @@ import java.util.List;
 public class ClassGroup {
 
     @Id
-    private int id;
+    private Long id;
 
     @NotBlank(message = "name.is.missing")
     private String name;
 
     // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    /*@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Lesson> lessons;
+    private List<Lesson> lessons;*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ClassGroup that = (ClassGroup) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
