@@ -1,17 +1,27 @@
 package isp_class_schedule_backend.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-
 import java.time.LocalDateTime;
 
-@Value
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class LessonDTO {
-    @EqualsAndHashCode.Include
-    Long id;
-    LocalDateTime startTimestamp;
-    LocalDateTime endTimestamp;
-    String courseName;
-    String classGroupName;
+public record LessonDTO(
+        Long id,
+        LocalDateTime startTimestamp,
+        LocalDateTime endTimestamp,
+        String courseName,
+        String classGroupName
+) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LessonDTO lessonDTO = (LessonDTO) o;
+
+        return id.equals(lessonDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

@@ -3,8 +3,10 @@ package isp_class_schedule_backend.controller;
 import isp_class_schedule_backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +55,19 @@ public class ClassScheduleRestController {
     @GetMapping("/lessonIDSelect")
     public List<Lesson> allLessonWithSelect() {
         return lessonRepo.getLessons();
+    }
+
+    @GetMapping("/lessonDTOs")
+    public List<LessonDTO> allLessonDTOs() {
+        return List.of(
+                new LessonDTO(5L, LocalDateTime.of(2011, 8, 5, 15, 0), LocalDateTime.of(2011, 8, 5, 18, 0), "TestCourse", "TestClassGroup"),
+                new LessonDTO(11L, LocalDateTime.of(2022, 1, 17, 9, 45), LocalDateTime.of(2023, 2, 18, 11, 15), "TestCourse", "TestClassGroup")
+        );
+    }
+
+    @GetMapping("/coursesWithClassGroups")
+    public List<Pair<CourseDTO, List<ClassGroupDTO>>> getCoursesWithClassGroups() {
+        return courseRepo.getCoursesWithClassGroups();
     }
 
     @GetMapping("/lessonIDs")

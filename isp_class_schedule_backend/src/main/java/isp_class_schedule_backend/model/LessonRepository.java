@@ -17,6 +17,9 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Lon
     @Query(value = "SELECT * FROM isp_class_schedule.lessons", nativeQuery = true)
     List<Lesson> getLessons();
 
+    @Query(value = "SELECT * FROM isp_class_schedule.lessons", nativeQuery = true)
+    List<LessonDTO> getLessonDTOs();
+
     @Query(value = "SELECT course_id, class_group_id FROM isp_class_schedule.lessons", nativeQuery = true)
     List<?> getLessonIDs();
 

@@ -32,7 +32,7 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
 
     private String coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(List<CourseAndClassGroupDTO> coursesAndClassGroups) {
         return coursesAndClassGroups.stream()
-                .map(coAndClGr -> "("+coAndClGr.getCourse().getId()+","+coAndClGr.getClassGroup().getId()+")")
+                .map(coAndClGr -> "("+coAndClGr.course().id()+","+coAndClGr.classGroup().id()+")")
                 .collect(Collectors.joining(","));
     }
 }

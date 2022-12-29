@@ -1,11 +1,21 @@
 package isp_class_schedule_backend.model;
 
-import lombok.*;
+public record CourseDTO(
+        Long id,
+        String name
+) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-@Value
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CourseDTO {
-    @EqualsAndHashCode.Include
-    Long id;
-    String name;
+        CourseDTO courseDTO = (CourseDTO) o;
+
+        return id.equals(courseDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

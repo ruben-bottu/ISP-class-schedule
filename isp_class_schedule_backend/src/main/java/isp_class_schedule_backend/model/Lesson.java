@@ -30,15 +30,15 @@ public class Lesson {
     private LocalDateTime endTimestamp;
 
     @JsonBackReference
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id") // Should not be necessary
-    @ToString.Exclude
     private Course course;
 
     @JsonBackReference
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_group_id", referencedColumnName = "id") // Should not be necessary
-    @ToString.Exclude
     private ClassGroup classGroup;
 
     public String getCourseName() {
