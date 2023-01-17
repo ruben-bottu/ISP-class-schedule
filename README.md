@@ -17,7 +17,7 @@ This project is for combi students who are struggling to put together a good Ind
 
 5. You should now be able to send GET requests to:
    
-   > `localhost:8080/api/schedule/class_schedule`
+   > `localhost:8080/api/schedule/proposals`
    
    with in the body of the request a JSON array with the course ID's of the courses that you would like to take, e.g.
    
