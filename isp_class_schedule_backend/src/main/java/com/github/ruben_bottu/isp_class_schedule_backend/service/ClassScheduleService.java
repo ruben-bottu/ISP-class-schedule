@@ -2,7 +2,6 @@ package com.github.ruben_bottu.isp_class_schedule_backend.service;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.*;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.lessons.Lesson;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.lessons.LessonRepository;
@@ -34,11 +33,12 @@ public class ClassScheduleService {
     }
 
     public int countOverlaps(List<CourseAndClassGroupDTO> list) {
+        if (list.size() == 0) throw new IllegalStateException("List cannot be empty");
         if (list.size() == 1) return 0;
         return lessonRepo.countOverlaps(list);
     }
 
-    public List<ClassScheduleProposalDTO> getClassScheduleProposals(int numberOfSolutions, List<Long> courseIds) {
+    public List<ClassScheduleProposalDTO> getProposals(int numberOfSolutions, List<Long> courseIds) {
         var coursesWithClassGroups = courseRepo.getCoursesWithClassGroups(courseIds);
         var algoState = new ClassScheduleAlgoState(coursesWithClassGroups);
         return ClassScheduleSearch.searchGreedy(algoState, numberOfSolutions, this::countOverlaps);

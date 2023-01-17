@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/schedule")
 public class ClassScheduleRestController {
 
-    private static final int DEFAULT_RESULT_LIMIT = 20;
-    //private static final String STRING_DEFAULT_RESULT_LIMIT = Integer.toString(DEFAULT_RESULT_LIMIT);
+    private static final int DEFAULT_NUMBER_OF_SOLUTIONS = 20;
+    private static final int MAX_NUMBER_OF_SOLUTIONS = 30;
 
     @Autowired
     private ClassScheduleService service;
@@ -34,7 +34,7 @@ public class ClassScheduleRestController {
     private LessonRepository lessonRepo;
 
     @GetMapping("/class_schedule_sql")
-    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int resultLimit, @RequestBody List<Long> courseIds) {
+    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_NUMBER_OF_SOLUTIONS +"") int resultLimit, @RequestBody List<Long> courseIds) {
         return lessonRepo.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
     }
 
@@ -189,13 +189,10 @@ public class ClassScheduleRestController {
                 new Object[]{5, 4})));
     }*/
 
-    // TODO defaultValue works, specifying limit in url doesn't work
-    @GetMapping("class_schedule")
-    public List<ClassScheduleProposalDTO> getClassScheduleProposals(@RequestParam(name = "limit", defaultValue = DEFAULT_RESULT_LIMIT+"") int numberOfSolutions, @RequestBody List<Long> courseIds) {
-        /*int numberOfSolutions = 20;
-        List<Long> courseIds = List.of(1L, 3L, 4L, 5L);*/
-        System.out.println("number of solutions: " + numberOfSolutions);
-        return service.getClassScheduleProposals(numberOfSolutions, courseIds);
+    @GetMapping("proposals")
+    public List<ClassScheduleProposalDTO> proposals(@RequestParam(name = "limit", defaultValue = DEFAULT_NUMBER_OF_SOLUTIONS+"") int numberOfSolutionsRequested, @RequestBody List<Long> courseIds) {
+        int numberOfSolutions = Math.min(numberOfSolutionsRequested, MAX_NUMBER_OF_SOLUTIONS);
+        return service.getProposals(numberOfSolutions, courseIds);
     }
 
     @GetMapping("/coursesWithClassGroups")

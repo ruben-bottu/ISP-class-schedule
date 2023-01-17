@@ -1,6 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,23 +11,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 public class ClassScheduleAlgoState {
-    private final List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups;
+    private final List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups; // Immutable
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final List<CourseAndClassGroupDTO> combination; // Add one element at each level
-    private final int currentIndex;
-
-    /*private ClassScheduleAlgoState(List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups, List<CourseAndClassGroupDTO> combination, int currentIndex) {
-        this.coursesWithClassGroups = coursesWithClassGroups;
-        this.combination = combination;
-        this.currentIndex = currentIndex;
-    }*/
 
     public ClassScheduleAlgoState(List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups) {
-        this(coursesWithClassGroups, new ArrayList<>(), 0);
+        this(coursesWithClassGroups, new ArrayList<>());
     }
 
     public List<CourseAndClassGroupDTO> getCombination() {
@@ -38,12 +33,12 @@ public class ClassScheduleAlgoState {
     }
 
     public boolean isSolution() {
-        return coursesWithClassGroups.size() == combination.size();
+        return combination.size() == coursesWithClassGroups.size();
     }
 
     public List<ClassScheduleAlgoState> successors() {
-        if (currentIndex == coursesWithClassGroups.size()) return Collections.emptyList();
-        var courseWithClassGroups = coursesWithClassGroups.get(currentIndex);
+        if (getDepth() == coursesWithClassGroups.size()) return Collections.emptyList();
+        var courseWithClassGroups = coursesWithClassGroups.get(getDepth());
         var course = courseWithClassGroups.first;
         var classGroups = courseWithClassGroups.second;
         return classGroups.stream()
@@ -55,30 +50,6 @@ public class ClassScheduleAlgoState {
         var shallowCopy = new ArrayList<>(combination);
         var courseAndClassGroup = new CourseAndClassGroupDTO(course, classGroup);
         shallowCopy.add(courseAndClassGroup);
-        return new ClassScheduleAlgoState(coursesWithClassGroups, shallowCopy, currentIndex + 1);
+        return new ClassScheduleAlgoState(coursesWithClassGroups, shallowCopy);
     }
-
-    /*@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ClassScheduleAlgoState that = (ClassScheduleAlgoState) o;
-
-        return combination.equals(that.combination);
-    }
-
-    @Override
-    public int hashCode() {
-        return combination.hashCode();
-    }*/
-
-    /*@Override
-    public String toString() {
-        return "ClassScheduleAlgoState{" +
-                "coursesWithClassGroups=" + coursesWithClassGroups +
-                ", combination=" + combination +
-                ", currentIndex=" + currentIndex +
-                '}';
-    }*/
 }

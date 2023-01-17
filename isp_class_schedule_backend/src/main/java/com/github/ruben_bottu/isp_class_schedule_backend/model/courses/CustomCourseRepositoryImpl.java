@@ -22,10 +22,10 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
         @SuppressWarnings("unchecked")
         List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups = entityManager.createQuery("""
         SELECT DISTINCT
-                c.id AS c_id,
-                c.name AS c_name,
-                cg.id AS cg_id,
-                cg.name AS cg_name
+                c.id AS cId,
+                c.name AS cName,
+                cg.id AS cgId,
+                cg.name AS cgName
         FROM Course c JOIN Lesson l ON c.id = l.course.id
             JOIN ClassGroup cg ON l.classGroup.id = cg.id
         WHERE c.id IN (:courseIds)

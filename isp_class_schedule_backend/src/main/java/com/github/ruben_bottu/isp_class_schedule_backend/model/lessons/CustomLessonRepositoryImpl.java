@@ -7,8 +7,6 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.aspectj.runtime.internal.Conversions.intValue;
-
 public class CustomLessonRepositoryImpl implements CustomLessonRepository {
 
     @PersistenceContext
@@ -29,7 +27,11 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
         WHERE (s1.start_timestamp, s1.end_timestamp) OVERLAPS
             (s2.start_timestamp, s2.end_timestamp);
         """.formatted(courseIdAndClassGroupIds);
-        return intValue( entityManager.createNativeQuery(query).getSingleResult() );
+        return toInt( entityManager.createNativeQuery(query).getSingleResult() );
+    }
+
+    private int toInt(Object o) {
+        return ((Long) o).intValue();
     }
 
     private String coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(List<CourseAndClassGroupDTO> coursesAndClassGroups) {
