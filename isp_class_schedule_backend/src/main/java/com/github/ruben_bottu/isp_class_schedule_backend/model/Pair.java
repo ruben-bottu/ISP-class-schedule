@@ -1,17 +1,13 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
-@AllArgsConstructor(staticName = "of")
-@EqualsAndHashCode
 public class Pair<A, B> {
     public final A first;
     public final B second;
 
-    /*private Pair(A first, B second) {
+    private Pair(A first, B second) {
         this.first = first;
         this.second = second;
     }
@@ -20,12 +16,8 @@ public class Pair<A, B> {
         return new Pair<>(first, second);
     }
 
-    public A getFirst() {
-        return first;
-    }
-
-    public B getSecond() {
-        return second;
+    public static <A, B, I> Pair<A, B> ofIgnoreLast(A first, B second, I ignore) {
+        return Pair.of(first, second);
     }
 
     @Override
@@ -40,7 +32,7 @@ public class Pair<A, B> {
     @Override
     public int hashCode() {
         return Objects.hash(first, second);
-    }*/
+    }
 
     @Override
     public String toString() {

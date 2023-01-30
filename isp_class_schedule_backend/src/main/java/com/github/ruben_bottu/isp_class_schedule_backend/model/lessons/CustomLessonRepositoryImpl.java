@@ -3,6 +3,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseAndClassGroupDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +13,6 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    // TODO use Hibernate Query Language
     @Override
     public int countOverlaps(List<CourseAndClassGroupDTO> list) {
         String courseIdAndClassGroupIds = coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(list);
@@ -28,6 +28,22 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
             (s2.start_timestamp, s2.end_timestamp);
         """.formatted(courseIdAndClassGroupIds);
         return toInt( entityManager.createNativeQuery(query).getSingleResult() );
+    }
+
+    public int countOverlapsBetween(CourseAndClassGroupDTO element, List<CourseAndClassGroupDTO> list) {
+        String courseIdAndClassGroupIds = coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(list);
+        String query = """
+        SELECT count(*) AS overlap_count
+        FROM (VALUES %s) AS i(course_id, class_group_id) INNER JOIN lessons l1 USING (course_id, class_group_id)
+            INNER JOIN lessons l2 ON (l2.course_id, l2.class_group_id) = (:courseId, :classGroupId)
+        WHERE (l1.start_timestamp, l1.end_timestamp) OVERLAPS
+              (l2.start_timestamp, l2.end_timestamp);
+                """.formatted(courseIdAndClassGroupIds);
+        Object result = entityManager.createNativeQuery(query)
+                .setParameter("courseId", element.course().id())
+                .setParameter("classGroupId", element.classGroup().id())
+                .getSingleResult();
+        return toInt(result);
     }
 
     private int toInt(Object o) {

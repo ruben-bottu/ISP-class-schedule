@@ -16,24 +16,13 @@ import java.util.List;
 @EnableWebSecurity
 public class AuthenticationBasicConfiguration {
 
-    /*protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors()
                 .and()
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/api/**").permitAll()
-                .and()
-                .csrf().disable()
-                .httpBasic();
-    }*/
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
+                .csrf()
                 .disable()
-                //.cors()
-                //.and()
                 .authorizeHttpRequests()
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/api/**").permitAll()
@@ -47,36 +36,19 @@ public class AuthenticationBasicConfiguration {
     }
 
     /*@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.DELETE)
-                .hasRole("ADMIN")
-                .requestMatchers("/admin/**")
-                .hasAnyRole("ADMIN")
-                .requestMatchers("/user/**")
-                .hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/login/**")
-                .anonymous()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        return http.build();
-    }*/
-
-    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8001/"));
         configuration.setAllowedMethods(List.of("GET"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }*/
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
     }
 }

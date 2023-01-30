@@ -4,16 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "courses")
 public class Course {
@@ -40,5 +34,32 @@ public class Course {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+
+    // ###################### GENERATED ######################
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

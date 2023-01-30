@@ -9,27 +9,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ClassScheduleService {
+    private static final int MAX_NUMBER_OF_SOLUTIONS = 30;
+    private final CourseRepository courseRepo;
+    private final LessonRepository lessonRepo;
 
-    @Autowired
-    private CourseRepository courseRepo;
-    @Autowired
-    private LessonRepository lessonRepo;
-
+    public ClassScheduleService(CourseRepository courseRepo, LessonRepository lessonRepo) {
+        this.courseRepo = courseRepo;
+        this.lessonRepo = lessonRepo;
+    }
 
     public String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds) {
         return lessonRepo.getCombinationsWithCollisionCountJson(rowLimit, courseIds);
     }
 
-    public List<Lesson> getLessons() {
-        return lessonRepo.getLessons();
-    }
-
     public Iterable<Course> getAllCourses() {
         return courseRepo.findAll(Sort.unsorted());
+    }
+
+    public Iterable<Lesson> getAllLessons() {
+        return lessonRepo.findAll(Sort.unsorted());
     }
 
     public int countOverlaps(List<CourseAndClassGroupDTO> list) {
@@ -38,9 +43,28 @@ public class ClassScheduleService {
         return lessonRepo.countOverlaps(list);
     }
 
-    public List<ClassScheduleProposalDTO> getProposals(int numberOfSolutions, List<Long> courseIds) {
+    private <T> boolean listContainsDuplicates(List<T> list) {
+        Set<T> set = new HashSet<>();
+        return !list.stream().allMatch(set::add);
+    }
+
+    private boolean allCourseIdsExist(List<Long> courseIds) {
+        int numberOfIdsFound = courseRepo.countByIdIn(courseIds);
+        return courseIds.size() == numberOfIdsFound;
+    }
+
+    public static IllegalArgumentException invalidCourseIdsException() {
+        return new IllegalArgumentException("Invalid course IDs");
+    }
+
+    public List<ClassScheduleProposalDTO> getProposals(List<Long> courseIds, int requestedNumberOfSolutions) {
+        if (requestedNumberOfSolutions < 0) throw new IllegalArgumentException("Number of solutions cannot be negative, given: " + requestedNumberOfSolutions);
+        if (courseIds.isEmpty() || requestedNumberOfSolutions == 0) return Collections.emptyList();
+        if (listContainsDuplicates(courseIds) || !allCourseIdsExist(courseIds)) throw invalidCourseIdsException();
+        int numberOfSolutions = Math.min(requestedNumberOfSolutions, MAX_NUMBER_OF_SOLUTIONS);
+
         var coursesWithClassGroups = courseRepo.getCoursesWithClassGroups(courseIds);
-        var algoState = new ClassScheduleAlgoState(coursesWithClassGroups);
-        return ClassScheduleSearch.searchGreedy(algoState, numberOfSolutions, this::countOverlaps);
+        var algoState = new SearchAlgorithmState(coursesWithClassGroups);
+        return Search.greedySearch(algoState, numberOfSolutions, this::countOverlaps);
     }
 }

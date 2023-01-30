@@ -1,27 +1,21 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-
 import java.util.Objects;
 
-@AllArgsConstructor(staticName = "of")
-@EqualsAndHashCode
 public class IntObjPair<A> {
     public final int integer;
     public final A object;
 
-    /*private IntObjPair(int integer, A object) {
+    private IntObjPair(int integer, A object) {
         this.integer = integer;
         this.object = object;
-    }*/
+    }
 
-    /*public static <A> IntObjPair<A> of(int integer, A object) {
+    public static <A> IntObjPair<A> of(int integer, A object) {
         return new IntObjPair<>(integer, object);
-    }*/
+    }
 
-    /*@Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -32,7 +26,7 @@ public class IntObjPair<A> {
     @Override
     public int hashCode() {
         return Objects.hash(integer, object);
-    }*/
+    }
 
     @Override
     public String toString() {
