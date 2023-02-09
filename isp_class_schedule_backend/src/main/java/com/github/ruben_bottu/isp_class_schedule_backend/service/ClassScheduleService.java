@@ -2,6 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.service;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.*;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.lessons.Lesson;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.lessons.LessonRepository;
@@ -9,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ClassScheduleService {
@@ -55,6 +53,28 @@ public class ClassScheduleService {
 
     public static IllegalArgumentException invalidCourseIdsException() {
         return new IllegalArgumentException("Invalid course IDs");
+    }
+
+    public String searchTreeToString() {
+        var coursesWithClassGroups = courseRepo.getCoursesWithClassGroups(List.of(1L,3L,4L,5L));
+        coursesWithClassGroups.sort((o1, o2) -> (int) (o1.first.id() - o2.first.id()));
+        var root = new TreeNode("empty", new ArrayList<>());
+        var fringe = new ArrayDeque<TreeNode>();
+        fringe.add(root);
+
+        while (!fringe.isEmpty()) {
+            var current = fringe.remove();
+            int depth = (int) current.getName().chars().filter(ch -> ch == '(').count();
+            if (depth == coursesWithClassGroups.size()) continue;
+            var courseWithClassGroups = coursesWithClassGroups.get(depth);
+            for (ClassGroupDTO classGroupDTO : courseWithClassGroups.second) {
+                String data = current.getName() + " (" + courseWithClassGroups.first.id() + "," + classGroupDTO.id() + ")";
+                var node = new TreeNode(data, new ArrayList<>());
+                current.getChildren().add(node);
+                fringe.add(node);
+            }
+        }
+        return root.toString();
     }
 
     public List<ClassScheduleProposalDTO> getProposals(List<Long> courseIds, int requestedNumberOfSolutions) {

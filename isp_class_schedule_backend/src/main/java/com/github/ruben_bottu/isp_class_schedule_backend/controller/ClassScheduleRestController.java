@@ -46,6 +46,11 @@ public class ClassScheduleRestController {
         }
     }
 
+    @GetMapping("search-tree")
+    public String searchTreeToString() {
+        return service.searchTreeToString();
+    }
+
     @GetMapping("proposals/{rawCourseIds}")
     public List<ClassScheduleProposalDTO> proposals(@PathVariable String rawCourseIds, @RequestParam(name = "limit", defaultValue = DEFAULT_NUMBER_OF_SOLUTIONS + "") int requestedNumberOfSolutions) {
         var courseIds = stringToCourseIds(rawCourseIds);

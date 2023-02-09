@@ -29,6 +29,9 @@ public class Search {
     }*/
 
     public static List<ClassScheduleProposalDTO> greedySearch(SearchAlgorithmState startState, int numberOfSolutions, ToIntFunction<List<CourseAndClassGroupDTO>> countOverlaps) {
+        // By first using the most "constrained" courses – the ones with the least class groups –
+        // we can reduce the size of the tree significantly
+        startState = startState.sortByNumberOfClassGroupsAscending();
         // The set is sorted in ascending order
         var fringe = new TreeSet<>(SearchAlgorithmFringeComparator.getInstance());
         fringe.add(new SearchAlgorithmFringeDTO(0, startState));
@@ -37,6 +40,7 @@ public class Search {
         while (!fringe.isEmpty()) {
             var current = fringe.pollFirst();
             var currentState = current.state();
+            System.err.println(currentState.getCombination().stream().map(coCg -> "("+coCg.course().id()+","+coCg.classGroup().id()+")").toList());
             if (currentState.isSolution()) {
                 result.add(new ClassScheduleProposalDTO(current.overlapCount(), currentState.getCombination()));
                 if (result.size() == numberOfSolutions) return result;
@@ -49,7 +53,14 @@ public class Search {
         return result;
     }
 
+    private static int countOverlaps(ToIntBiFunction<CourseAndClassGroupDTO, List<CourseAndClassGroupDTO>> countOverlapsBetween, SearchAlgorithmFringeDTO parent, SearchAlgorithmState successor) {
+        return parent.overlapCount() + countOverlapsBetween.applyAsInt(successor.getNewestElement(), parent.state().getCombination());
+    }
+
     public static List<ClassScheduleProposalDTO> greedySearchMemory(SearchAlgorithmState startState, int numberOfSolutions, ToIntBiFunction<CourseAndClassGroupDTO, List<CourseAndClassGroupDTO>> countOverlapsBetween) {
+        // By first using the most "constrained" courses – the ones with the least class groups –
+        // we can reduce the size of the tree significantly
+        startState = startState.sortByNumberOfClassGroupsAscending();
         // The set is sorted in ascending order
         var fringe = new TreeSet<>(SearchAlgorithmFringeComparator.getInstance());
         fringe.add(new SearchAlgorithmFringeDTO(0, startState));
@@ -63,7 +74,7 @@ public class Search {
                 if (result.size() == numberOfSolutions) return result;
             }
             for (SearchAlgorithmState successor : currentState.successors()) {
-                int overlapCount = current.overlapCount() + countOverlapsBetween.applyAsInt(successor.getNewestElement(), currentState.getCombination());
+                int overlapCount = countOverlaps(countOverlapsBetween, current, successor);
                 fringe.add(new SearchAlgorithmFringeDTO(overlapCount, successor));
             }
         }

@@ -4,8 +4,11 @@ import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparingInt;
 
 public class SearchAlgorithmState {
     private final List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups; // Constant
@@ -18,10 +21,6 @@ public class SearchAlgorithmState {
 
     public SearchAlgorithmState(List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups) {
         this(coursesWithClassGroups, new ArrayList<>());
-    }
-
-    public List<CourseAndClassGroupDTO> getCombination() {
-        return combination;
     }
 
     public int getDepth() {
@@ -53,7 +52,17 @@ public class SearchAlgorithmState {
         return new SearchAlgorithmState(coursesWithClassGroups, shallowCopy);
     }
 
+    public SearchAlgorithmState sortByNumberOfClassGroupsAscending() {
+        var shallowCopy = new ArrayList<>(coursesWithClassGroups);
+        shallowCopy.sort(comparingInt(o -> o.second.size()));
+        return new SearchAlgorithmState(shallowCopy, combination);
+    }
+
     // ###################### GENERATED ######################
+
+    public List<CourseAndClassGroupDTO> getCombination() {
+        return combination;
+    }
 
     @Override
     public boolean equals(Object o) {
