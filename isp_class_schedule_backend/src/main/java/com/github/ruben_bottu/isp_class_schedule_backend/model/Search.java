@@ -8,6 +8,7 @@ import java.util.function.ToIntFunction;
 
 public class Search {
 
+    // Uses IntObjPair instead of dedicated type
     /*public static List<ClassScheduleProposalDTO> greedySearch(SearchAlgorithmState startState, int numberOfSolutions, ToIntFunction<List<CourseAndClassGroupDTO>> countOverlaps) {
         NavigableSet<IntObjPair<SearchAlgorithmState>> fringe = new TreeSet<>(SearchAlgorithmFringeComparator.getInstance());
         fringe.add(IntObjPair.of(0, startState));
@@ -40,7 +41,7 @@ public class Search {
         while (!fringe.isEmpty()) {
             var current = fringe.pollFirst();
             var currentState = current.state();
-            System.err.println(currentState.getCombination().stream().map(coCg -> "("+coCg.course().id()+","+coCg.classGroup().id()+")").toList());
+            //System.err.println(currentState.getCombination().stream().map(coCg -> "("+coCg.course().id()+","+coCg.classGroup().id()+")").toList());
             if (currentState.isSolution()) {
                 result.add(new ClassScheduleProposalDTO(current.overlapCount(), currentState.getCombination()));
                 if (result.size() == numberOfSolutions) return result;

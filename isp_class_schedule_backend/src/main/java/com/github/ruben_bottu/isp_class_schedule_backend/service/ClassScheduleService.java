@@ -35,26 +35,6 @@ public class ClassScheduleService {
         return lessonRepo.findAll(Sort.unsorted());
     }
 
-    public int countOverlaps(List<CourseAndClassGroupDTO> list) {
-        if (list.size() == 0) throw new IllegalStateException("List cannot be empty");
-        if (list.size() == 1) return 0;
-        return lessonRepo.countOverlaps(list);
-    }
-
-    private <T> boolean listContainsDuplicates(List<T> list) {
-        Set<T> set = new HashSet<>();
-        return !list.stream().allMatch(set::add);
-    }
-
-    private boolean allCourseIdsExist(List<Long> courseIds) {
-        int numberOfIdsFound = courseRepo.countByIdIn(courseIds);
-        return courseIds.size() == numberOfIdsFound;
-    }
-
-    public static IllegalArgumentException invalidCourseIdsException() {
-        return new IllegalArgumentException("Invalid course IDs");
-    }
-
     public String searchTreeToString() {
         var coursesWithClassGroups = courseRepo.getCoursesWithClassGroups(List.of(1L,3L,4L,5L));
         coursesWithClassGroups.sort((o1, o2) -> (int) (o1.first.id() - o2.first.id()));
@@ -75,6 +55,26 @@ public class ClassScheduleService {
             }
         }
         return root.toString();
+    }
+
+    public int countOverlaps(List<CourseAndClassGroupDTO> list) {
+        if (list.size() == 0) throw new IllegalStateException("List cannot be empty");
+        if (list.size() == 1) return 0;
+        return lessonRepo.countOverlaps(list);
+    }
+
+    private <T> boolean listContainsDuplicates(List<T> list) {
+        Set<T> set = new HashSet<>();
+        return !list.stream().allMatch(set::add);
+    }
+
+    private boolean allCourseIdsExist(List<Long> courseIds) {
+        int numberOfIdsFound = courseRepo.countByIdIn(courseIds);
+        return courseIds.size() == numberOfIdsFound;
+    }
+
+    public static IllegalArgumentException invalidCourseIdsException() {
+        return new IllegalArgumentException("Invalid course IDs");
     }
 
     public List<ClassScheduleProposalDTO> getProposals(List<Long> courseIds, int requestedNumberOfSolutions) {

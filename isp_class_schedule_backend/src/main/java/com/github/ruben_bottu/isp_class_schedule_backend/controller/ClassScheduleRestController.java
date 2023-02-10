@@ -36,6 +36,11 @@ public class ClassScheduleRestController {
         return service.getAllLessons();
     }
 
+    @GetMapping("search-tree")
+    public String searchTreeToString() {
+        return service.searchTreeToString();
+    }
+
     private List<Long> stringToCourseIds(String string) {
         try {
             return Arrays.stream(string.split("\\+"))
@@ -44,11 +49,6 @@ public class ClassScheduleRestController {
         } catch (NumberFormatException e) {
             throw invalidCourseIdsException();
         }
-    }
-
-    @GetMapping("search-tree")
-    public String searchTreeToString() {
-        return service.searchTreeToString();
     }
 
     @GetMapping("proposals/{rawCourseIds}")
