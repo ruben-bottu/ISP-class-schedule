@@ -1,7 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroup;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroupDTO;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO;
 
 import java.time.LocalDateTime;
 
@@ -9,8 +9,8 @@ public record LessonDTO(
         Long id,
         LocalDateTime startTimestamp,
         LocalDateTime endTimestamp,
-        Course course,
-        ClassGroup classGroup
+        CourseDTO course,
+        ClassGroupDTO classGroup
 ) {
 
     @Override

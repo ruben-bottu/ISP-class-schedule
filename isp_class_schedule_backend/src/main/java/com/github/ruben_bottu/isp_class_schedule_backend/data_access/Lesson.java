@@ -1,9 +1,8 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroup;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
 import jakarta.persistence.*;
+
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.Hibernate;
 

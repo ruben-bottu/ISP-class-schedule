@@ -1,4 +1,4 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.model;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,8 +9,8 @@ import org.hibernate.Hibernate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "class_groups")
-public class ClassGroup {
+@Table(name = "courses")
+public class Course {
 
     @Id
     private Long id;
@@ -19,7 +19,7 @@ public class ClassGroup {
     private String name;
 
     // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
-    /*@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    /*@OneToMany(mappedBy = "classGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Lesson> lessons;*/
 
@@ -27,14 +27,15 @@ public class ClassGroup {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ClassGroup that = (ClassGroup) o;
-        return id != null && Objects.equals(id, that.id);
+        Course course = (Course) o;
+        return id != null && Objects.equals(id, course.id);
     }
 
     @Override
     public int hashCode() {
         return getClass().hashCode();
     }
+
 
     // ###################### GENERATED ######################
 
@@ -56,7 +57,7 @@ public class ClassGroup {
 
     @Override
     public String toString() {
-        return "ClassGroup{" +
+        return "Course{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';

@@ -1,7 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
-import jakarta.validation.constraints.NotBlank;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Course;
 
 public class CourseBuilder {
 

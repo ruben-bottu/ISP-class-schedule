@@ -1,20 +1,22 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassScheduleProposalDTO;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.lessons.Lesson;
-import com.github.ruben_bottu.isp_class_schedule_backend.service.ClassScheduleService;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.NotFoundException;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.ProposalsContract;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Course;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Lesson;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassScheduleService;
+
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.github.ruben_bottu.isp_class_schedule_backend.service.ClassScheduleService.invalidCourseIdsException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/schedule")
 public class ClassScheduleRestController {
-    public static final int DEFAULT_NUMBER_OF_SOLUTIONS = 20;
+    public static final int DEFAULT_SOLUTION_COUNT = 20;
     private final ClassScheduleService service;
 
     public ClassScheduleRestController(ClassScheduleService service) {
@@ -22,7 +24,7 @@ public class ClassScheduleRestController {
     }
 
     @GetMapping("/class_schedule")
-    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_NUMBER_OF_SOLUTIONS + "") int resultLimit, @RequestBody List<Long> courseIds) {
+    public String getCombinationsWithCollisionCountJson(@RequestParam(name = "limit", defaultValue = DEFAULT_SOLUTION_COUNT + "") int resultLimit, @RequestBody List<Long> courseIds) {
         return service.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
     }
 
@@ -41,19 +43,28 @@ public class ClassScheduleRestController {
         return service.searchTreeToString();
     }
 
-    private List<Long> stringToCourseIds(String string) {
-        try {
-            return Arrays.stream(string.split("\\+"))
-                    .map(Long::parseLong)
-                    .toList();
-        } catch (NumberFormatException e) {
-            throw invalidCourseIdsException();
-        }
+    @GetMapping("proposals/{courseIds}")
+    public List<ClassScheduleProposalDTO> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", defaultValue = DEFAULT_SOLUTION_COUNT + "") int solutionCount) {
+        System.out.println(courseIds);
+        var contract = new ProposalsContract(courseIds, solutionCount);
+        return service.getProposals(contract);
     }
 
-    @GetMapping("proposals/{rawCourseIds}")
-    public List<ClassScheduleProposalDTO> proposals(@PathVariable String rawCourseIds, @RequestParam(name = "limit", defaultValue = DEFAULT_NUMBER_OF_SOLUTIONS + "") int requestedNumberOfSolutions) {
-        var courseIds = stringToCourseIds(rawCourseIds);
-        return service.getProposals(courseIds, requestedNumberOfSolutions);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, String> handle(ConstraintViolationException exception) {
+        Map<String, String> errors = new HashMap<>();
+
+        var violations = exception.getConstraintViolations();
+        violations.forEach(violation -> errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public Map<String, String> handle(NotFoundException exception) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put(exception.getResourceName(), exception.getMessage());
+        return errors;
     }
 }

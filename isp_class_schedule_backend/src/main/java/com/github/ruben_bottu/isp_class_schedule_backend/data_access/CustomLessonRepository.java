@@ -1,4 +1,4 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseAndClassGroupDTO;
 

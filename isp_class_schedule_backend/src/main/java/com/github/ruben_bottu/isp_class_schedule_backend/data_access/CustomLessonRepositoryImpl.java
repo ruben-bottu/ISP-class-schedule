@@ -1,9 +1,8 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseAndClassGroupDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 
 import java.util.List;
 import java.util.stream.Collectors;

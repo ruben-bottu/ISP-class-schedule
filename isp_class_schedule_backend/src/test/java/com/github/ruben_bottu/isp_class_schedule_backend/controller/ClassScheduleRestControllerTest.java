@@ -1,10 +1,9 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Course;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroupDTO;
+import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassScheduleService;
 import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseBuilder;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.Course;
-import com.github.ruben_bottu.isp_class_schedule_backend.service.ClassScheduleService;
-import jakarta.servlet.ServletException;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +20,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -76,27 +73,26 @@ public class ClassScheduleRestControllerTest {
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
-    private void givenBadCourseIds_whenGetRequestForProposals_thenErrorIsThrown(String givenPath) throws Exception {
-        Exception raisedException = catchException(() -> classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + givenPath)));
-        assertThat(raisedException).isInstanceOf(ServletException.class)
-                .hasMessageContaining("Invalid course IDs");
+    @Test
+    public void givenInvalidCourseIds_whenGetRequestForProposals_thenStatus400BadRequestIsReturned() throws Exception {
+        classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/zy1x,bc"))
+                .andDo(print()).andExpect(status().isBadRequest());
+    }
+
+    // The default value is used instead of the incorrect Query Parameter
+    @Test
+    public void givenInvalidQueryParameter_whenGetRequestForProposals_thenStatus200OkIsReturned() throws Exception {
+        var validCourseIds = Stream.of(algo, web1, bop).map(Course::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var validCount = "5";
+        classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?limit=" + validCount))
+                .andDo(print()).andExpect(status().isOk());
     }
 
     @Test
-    public void givenInvalidCourseIds_whenGetRequestForProposals_thenErrorIsThrown() throws Exception {
-        givenBadCourseIds_whenGetRequestForProposals_thenErrorIsThrown("zy1x+bc");
-    }
-
-    @Test
-    public void givenDuplicateCourseIds_whenGetRequestForProposals_thenEmptyJsonListIsReturned() throws Exception {
-        givenBadCourseIds_whenGetRequestForProposals_thenErrorIsThrown("1+2+3+5+1+8");
-    }
-
-    @Test
-    public void givenInvalidLimit_whenGetRequestForProposals_thenStatus400BadRequestIsReturned() throws Exception {
-        var validCourseIds = Stream.of(algo, web1, bop).map(Course::getId).map(id -> Long.toString(id)).collect(Collectors.joining("+"));
-        var invalidLimit = "sj1m5g";
-        classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?limit=" + invalidLimit))
+    public void givenInvalidCount_whenGetRequestForProposals_thenStatus400BadRequestIsReturned() throws Exception {
+        var validCourseIds = Stream.of(algo, web1, bop).map(Course::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var invalidCount = "sj1m5g";
+        classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?count=" + invalidCount))
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 }

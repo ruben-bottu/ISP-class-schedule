@@ -1,5 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.model.lessons;
 
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CustomLessonRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Lesson;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,12 @@ public interface LessonRepository extends PagingAndSortingRepository<Lesson, Lon
     @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
     String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds);
 
+    @Query(nativeQuery = true, value = """
+            SELECT COUNT( DISTINCT EXTRACT(WEEK FROM l.start_timestamp) )
+            FROM lessons as l
+            WHERE l.course_id IN :courseIds
+            """)
+    int getNumberOfWeeksIn(List<Long> courseIds);
 
     /*@Query(nativeQuery = true, value = """
         WITH selected_lessons AS (

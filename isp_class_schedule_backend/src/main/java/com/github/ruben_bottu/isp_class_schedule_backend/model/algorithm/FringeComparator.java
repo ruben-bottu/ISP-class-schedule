@@ -1,20 +1,20 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.model;
+package com.github.ruben_bottu.isp_class_schedule_backend.model.algorithm;
 
 import java.util.Comparator;
 import java.util.Random;
 
-public class SearchAlgorithmFringeComparator implements Comparator<SearchAlgorithmFringeDTO> {
-    private static final SearchAlgorithmFringeComparator INSTANCE = new SearchAlgorithmFringeComparator();
+public class FringeComparator implements Comparator<Fringe> {
+    private static final FringeComparator INSTANCE = new FringeComparator();
     private static final Random RANDOM = new Random();
 
-    private SearchAlgorithmFringeComparator() {}
+    private FringeComparator() {}
 
-    public static Comparator<SearchAlgorithmFringeDTO> getInstance() {
+    public static Comparator<Fringe> getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public int compare(SearchAlgorithmFringeDTO o1, SearchAlgorithmFringeDTO o2) {
+    public int compare(Fringe o1, Fringe o2) {
         // Prefer states with fewer overlaps
         int cmp = o1.overlapCount() - o2.overlapCount();
         if (cmp != 0) return cmp;
