@@ -1,0 +1,4 @@
+class-schedule:
+  default-solution-count: 10
+  max-solution-count: 20
+  max-course-ids-size: 30

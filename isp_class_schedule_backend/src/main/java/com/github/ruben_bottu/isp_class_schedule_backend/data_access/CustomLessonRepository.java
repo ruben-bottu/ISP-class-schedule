@@ -1,11 +1,11 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseAndClassGroupDTO;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseAndClassGroup;
 
 import java.util.List;
 
 public interface CustomLessonRepository {
 
-    int countOverlaps(List<CourseAndClassGroupDTO> list);
-    int countOverlapsBetween(CourseAndClassGroupDTO element, List<CourseAndClassGroupDTO> list);
+    int countOverlaps(List<CourseAndClassGroup> list);
+    int countOverlapsBetween(CourseAndClassGroup element, List<CourseAndClassGroup> list);
 }

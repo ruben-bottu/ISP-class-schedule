@@ -1,6 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseAndClassGroupDTO;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseAndClassGroup;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -13,7 +13,7 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
     private EntityManager entityManager;
 
     @Override
-    public int countOverlaps(List<CourseAndClassGroupDTO> list) {
+    public int countOverlaps(List<CourseAndClassGroup> list) {
         String courseAndClassGroupIds = coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(list);
         String query = """
         WITH selected_lessons AS (
@@ -29,7 +29,7 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
         return toInt( entityManager.createNativeQuery(query).getSingleResult() );
     }
 
-    public int countOverlapsBetween(CourseAndClassGroupDTO element, List<CourseAndClassGroupDTO> list) {
+    public int countOverlapsBetween(CourseAndClassGroup element, List<CourseAndClassGroup> list) {
         String courseAndClassGroupIds = coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(list);
         String query = """
         SELECT count(*) AS overlap_count
@@ -49,7 +49,7 @@ public class CustomLessonRepositoryImpl implements CustomLessonRepository {
         return ((Long) o).intValue();
     }
 
-    private String coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(List<CourseAndClassGroupDTO> coursesAndClassGroups) {
+    private String coursesAndClassGroupsToCourseIdAndClassGroupIdStrings(List<CourseAndClassGroup> coursesAndClassGroups) {
         return coursesAndClassGroups.stream()
                 .map(coAndClGr -> "("+coAndClGr.course().id()+","+coAndClGr.classGroup().id()+")")
                 .collect(Collectors.joining(","));

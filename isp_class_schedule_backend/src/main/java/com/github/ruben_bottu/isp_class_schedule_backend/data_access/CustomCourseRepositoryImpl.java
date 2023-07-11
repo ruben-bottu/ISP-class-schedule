@@ -1,8 +1,8 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroupDTO;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.Pair;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.courses.CourseDTO;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.Pair;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -17,18 +17,18 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Pair<CourseDTO, List<ClassGroupDTO>>> getCoursesWithClassGroups(List<Long> courseIds) {
-        Map<Long, Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroupsMap = new LinkedHashMap<>();
+    public List<Pair<Course, List<ClassGroup>>> getCoursesWithClassGroups(List<Long> courseIds) {
+        Map<Long, Pair<Course, List<ClassGroup>>> coursesWithClassGroupsMap = new LinkedHashMap<>();
 
         @SuppressWarnings("unchecked")
-        List<Pair<CourseDTO, List<ClassGroupDTO>>> coursesWithClassGroups = entityManager.createQuery("""
+        List<Pair<Course, List<ClassGroup>>> coursesWithClassGroups = entityManager.createQuery("""
         SELECT DISTINCT
                 c.id AS cId,
                 c.name AS cName,
                 cg.id AS cgId,
                 cg.name AS cgName
-        FROM Course c JOIN Lesson l ON c.id = l.course.id
-            JOIN ClassGroup cg ON l.classGroup.id = cg.id
+        FROM CourseEntity c JOIN LessonEntity l ON c.id = l.course.id
+            JOIN ClassGroupEntity cg ON l.classGroup.id = cg.id
         WHERE c.id IN (:courseIds)
         """)
                 .setParameter("courseIds", courseIds)
@@ -40,24 +40,24 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
         return coursesWithClassGroups;
     }
 
-    private Object transformTuple(Object[] tuple, Map<Long, Pair<CourseDTO, List<ClassGroupDTO>>> courseDTOListMap) {
+    private Object transformTuple(Object[] tuple, Map<Long, Pair<Course, List<ClassGroup>>> courseDTOListMap) {
 
         Long courseId = (Long) tuple[0];
         String courseName = (String) tuple[1];
         Long classGroupId = (Long) tuple[2];
         String classGroupName = (String) tuple[3];
 
-        Pair<CourseDTO, List<ClassGroupDTO>> courseWithClassGroups = courseDTOListMap.computeIfAbsent(
+        Pair<Course, List<ClassGroup>> courseWithClassGroups = courseDTOListMap.computeIfAbsent(
                 courseId,
-                id -> Pair.of(new CourseDTO(courseId, courseName), new ArrayList<>())
+                id -> Pair.of(new Course(courseId, courseName), new ArrayList<>())
         );
 
-        courseWithClassGroups.second.add(new ClassGroupDTO(classGroupId, classGroupName));
+        courseWithClassGroups.second.add(new ClassGroup(classGroupId, classGroupName));
 
         return courseWithClassGroups;
     }
 
-    private List<Pair<CourseDTO, List<ClassGroupDTO>>> transformList(Map<Long, Pair<CourseDTO, List<ClassGroupDTO>>> courseDTOListMap) {
+    private List<Pair<Course, List<ClassGroup>>> transformList(Map<Long, Pair<Course, List<ClassGroup>>> courseDTOListMap) {
         return new ArrayList<>(courseDTOListMap.values());
     }
 }

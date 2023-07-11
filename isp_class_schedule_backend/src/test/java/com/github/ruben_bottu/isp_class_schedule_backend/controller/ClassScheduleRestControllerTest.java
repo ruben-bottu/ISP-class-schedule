@@ -1,9 +1,10 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.Course;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassGroupDTO;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.ClassScheduleService;
-import com.github.ruben_bottu.isp_class_schedule_backend.model.CourseBuilder;
+import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseBuilder;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,15 +32,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ClassScheduleRestController.class)
 @Import(AuthenticationBasicConfiguration.class)
 public class ClassScheduleRestControllerTest {
-    private static final String CLASS_SCHEDULE_PATH = "/api/schedule";
+    private static final String CLASS_SCHEDULE_PATH = "/api/class-schedule";
     private static final String COURSES_PATH = "/courses";
     private static final String PROPOSALS_PATH = "/proposals";
     @MockBean
     private ClassScheduleService service;
+    @MockBean
+    private ClassScheduleConfigurationProperties properties;
     @Autowired
     private MockMvc classScheduleRestController;
-    private Course algo, web1, bop, data1, testing;
-    private ClassGroupDTO oneTi1, oneTi2, oneTi3, twoTi5;
+    private CourseEntity algo, web1, bop, data1, testing;
+    private ClassGroup oneTi1, oneTi2, oneTi3, twoTi5;
 
     @Before
     public void setUp() {
@@ -49,10 +52,10 @@ public class ClassScheduleRestControllerTest {
         data1 = CourseBuilder.with(4L, "Data 1");
         testing = CourseBuilder.with(5L, "Testing");
 
-        oneTi1 = new ClassGroupDTO(1L, "ME-1TI/1");
-        oneTi2 = new ClassGroupDTO(2L, "ME-1TI/2");
-        oneTi3 = new ClassGroupDTO(3L, "ME-1TI/3");
-        twoTi5 = new ClassGroupDTO(4L, "ME-2TI/5");
+        oneTi1 = new ClassGroup(1L, "ME-1TI/1");
+        oneTi2 = new ClassGroup(2L, "ME-1TI/2");
+        oneTi3 = new ClassGroup(3L, "ME-1TI/3");
+        twoTi5 = new ClassGroup(4L, "ME-2TI/5");
     }
 
     @Test
@@ -82,7 +85,7 @@ public class ClassScheduleRestControllerTest {
     // The default value is used instead of the incorrect Query Parameter
     @Test
     public void givenInvalidQueryParameter_whenGetRequestForProposals_thenStatus200OkIsReturned() throws Exception {
-        var validCourseIds = Stream.of(algo, web1, bop).map(Course::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var validCourseIds = Stream.of(algo, web1, bop).map(CourseEntity::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
         var validCount = "5";
         classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?limit=" + validCount))
                 .andDo(print()).andExpect(status().isOk());
@@ -90,7 +93,7 @@ public class ClassScheduleRestControllerTest {
 
     @Test
     public void givenInvalidCount_whenGetRequestForProposals_thenStatus400BadRequestIsReturned() throws Exception {
-        var validCourseIds = Stream.of(algo, web1, bop).map(Course::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var validCourseIds = Stream.of(algo, web1, bop).map(CourseEntity::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
         var invalidCount = "sj1m5g";
         classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?count=" + invalidCount))
                 .andDo(print()).andExpect(status().isBadRequest());
