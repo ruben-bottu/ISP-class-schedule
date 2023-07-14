@@ -4,6 +4,7 @@ import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurat
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.LessonEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.*;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

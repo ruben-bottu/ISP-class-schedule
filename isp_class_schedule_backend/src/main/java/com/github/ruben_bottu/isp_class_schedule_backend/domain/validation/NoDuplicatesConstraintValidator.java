@@ -1,4 +1,4 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.domain;
+package com.github.ruben_bottu.isp_class_schedule_backend.domain.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

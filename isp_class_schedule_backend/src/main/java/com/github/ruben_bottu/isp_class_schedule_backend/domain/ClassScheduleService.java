@@ -6,6 +6,7 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.State;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.lesson.LessonRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.data.domain.Sort;

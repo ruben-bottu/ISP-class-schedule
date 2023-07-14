@@ -2,6 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -76,7 +77,6 @@ public class ClassScheduleServiceTest {
         var contract = new ProposalsContract(givenCourseIds, defaultSolutionCount, properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
-        var validation = validator.validate(contract);
         Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
