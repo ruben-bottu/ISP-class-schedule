@@ -17,7 +17,7 @@ public class NoDuplicatesConstraintValidator implements ConstraintValidator<NoDu
     }
 
     @Override
-    public boolean isValid(Iterable<?> iterable, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Iterable<?> iterable, ConstraintValidatorContext context) {
         return !containsDuplicates(iterable);
     }
 }

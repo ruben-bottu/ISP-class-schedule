@@ -76,6 +76,7 @@ public class ClassScheduleServiceTest {
         var contract = new ProposalsContract(givenCourseIds, defaultSolutionCount, properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
+        var validation = validator.validate(contract);
         Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
