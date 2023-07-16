@@ -33,7 +33,7 @@ public class Search {
     }*/
 
     public List<ClassScheduleProposal> greedySearch(State startState, int solutionCount, ToIntFunction<List<CourseGroup>> countOverlaps) {
-        // By first using the most "constrained" courses – the ones with the least groups –
+        // By first using the most "constrained" courses – the ones with the least courseGroups –
         // we can reduce the size of the tree significantly
         startState = startState.sortByCourseGroupCountAscending();
         // The set is sorted in ascending order
@@ -62,7 +62,7 @@ public class Search {
     }
 
     public static List<ClassScheduleProposal> greedySearchMemory(State startState, int solutionCount, ToIntBiFunction<CourseGroup, List<CourseGroup>> countOverlapsBetween) {
-        // By first using the most "constrained" courses – the ones with the least groups –
+        // By first using the most "constrained" courses – the ones with the least courseGroups –
         // we can reduce the size of the tree significantly
         startState = startState.sortByCourseGroupCountAscending();
         // The set is sorted in ascending order

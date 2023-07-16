@@ -1,6 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.State;
@@ -11,8 +11,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,8 +62,6 @@ public class ClassScheduleService {
     }*/
 
     private int countOverlaps(List<CourseGroup> list) {
-        //if (list.size() == 0) throw new IllegalStateException("List cannot be empty");
-        //if (list.size() == 1) return 0;
         if (list.size() <= 1) return 0;
         return classRepo.countOverlaps(list);
     }
@@ -102,7 +98,7 @@ public class ClassScheduleService {
         if (!allCourseIdsExist(courseIds)) throw new NotFoundException("courseIds", "Invalid course IDs");
 
         var courseGroups = courseRepo.getCourseGroupsGroupedByCourse(courseIds);
-        var state = new State(courseGroups);
-        return search.greedySearch(state, solutionCount, this::countOverlaps);
+        var algorithmState = new State(courseGroups);
+        return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
     }
 }

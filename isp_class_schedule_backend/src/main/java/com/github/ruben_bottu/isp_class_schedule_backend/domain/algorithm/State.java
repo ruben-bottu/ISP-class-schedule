@@ -5,7 +5,6 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 

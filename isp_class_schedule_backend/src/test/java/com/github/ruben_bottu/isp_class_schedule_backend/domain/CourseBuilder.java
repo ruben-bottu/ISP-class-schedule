@@ -1,6 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
 
 public class CourseBuilder {
 

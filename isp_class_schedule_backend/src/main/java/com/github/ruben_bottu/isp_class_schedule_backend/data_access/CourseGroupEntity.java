@@ -1,6 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
 import jakarta.persistence.*;
 import org.hibernate.Hibernate;
 

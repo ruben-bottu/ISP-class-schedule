@@ -2,7 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.*;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;

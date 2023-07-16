@@ -1,4 +1,4 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access.course;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

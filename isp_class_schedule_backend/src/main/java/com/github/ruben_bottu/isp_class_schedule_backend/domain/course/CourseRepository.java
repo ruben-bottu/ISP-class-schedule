@@ -1,8 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain.course;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CustomCourseRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CustomCourseRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

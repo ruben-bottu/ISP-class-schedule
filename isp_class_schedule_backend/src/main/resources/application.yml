@@ -12,6 +12,10 @@ spring:
         default_schema: isp_class_schedule
         generate_statistics: true
     show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
 
 logging:
   level:

@@ -3,7 +3,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm;
 import java.util.Comparator;
 import java.util.Random;
 
-public class FringeComparator implements Comparator<Fringe> {
+class FringeComparator implements Comparator<Fringe> {
     private static final FringeComparator INSTANCE = new FringeComparator();
     private static final Random RANDOM = new Random();
 
