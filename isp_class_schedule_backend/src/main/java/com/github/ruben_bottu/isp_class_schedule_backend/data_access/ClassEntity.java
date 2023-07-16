@@ -10,10 +10,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "lessons")
-public class LessonEntity {
+@Table(name = "class")
+public class ClassEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull(message = "start.timestamp.missing")
@@ -26,28 +27,23 @@ public class LessonEntity {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", referencedColumnName = "id") // Should not be necessary
-    private CourseEntity course;
-
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_group_id", referencedColumnName = "id") // Should not be necessary
-    private ClassGroupEntity classGroup;
+    @JoinColumn(name = "course_group_id", referencedColumnName = "id") // Should not be necessary
+    private CourseGroupEntity courseGroup;
 
     public String getCourseName() {
-        return (course == null) ? "" : course.getName();
+        return (courseGroup == null) ? "" : courseGroup.getCourseName();
     }
 
-    public String getClassGroupName() {
-        return (classGroup == null) ? "" : classGroup.getName();
+    public String getGroupName() {
+        return (courseGroup == null) ? "" : courseGroup.getGroupName();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        LessonEntity lesson = (LessonEntity) o;
-        return id != null && Objects.equals(id, lesson.id);
+        ClassEntity classEntity = (ClassEntity) o;
+        return id != null && Objects.equals(id, classEntity.id);
     }
 
     @Override
@@ -55,7 +51,10 @@ public class LessonEntity {
         return getClass().hashCode();
     }
 
-    // ###################### GENERATED ######################
+
+    // ######################
+    //      Generated       #
+    // ######################
 
     public Long getId() {
         return id;
@@ -81,30 +80,22 @@ public class LessonEntity {
         this.endTimestamp = endTimestamp;
     }
 
-    public CourseEntity getCourse() {
-        return course;
+    public CourseGroupEntity getCourseGroup() {
+        return courseGroup;
     }
 
-    public void setCourse(CourseEntity course) {
-        this.course = course;
-    }
-
-    public ClassGroupEntity getClassGroup() {
-        return classGroup;
-    }
-
-    public void setClassGroup(ClassGroupEntity classGroup) {
-        this.classGroup = classGroup;
+    public void setCourseGroup(CourseGroupEntity courseGroup) {
+        this.courseGroup = courseGroup;
     }
 
     @Override
     public String toString() {
-        return "LessonEntity{" +
+        return "ClassEntity{" +
                 "id=" + id +
                 ", startTimestamp=" + startTimestamp +
                 ", endTimestamp=" + endTimestamp +
                 ", courseName=" + getCourseName() +
-                ", classGroupName=" + getClassGroupName() +
+                ", groupName=" + getGroupName() +
                 '}';
     }
 }

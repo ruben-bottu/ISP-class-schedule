@@ -1,18 +1,17 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "course")
 public class CourseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank(message = "name.is.missing")
@@ -21,14 +20,14 @@ public class CourseEntity {
     // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
     /*@OneToMany(mappedBy = "classGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<LessonEntity> lessons;*/
+    private List<ClassEntity> classes;*/
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CourseEntity course = (CourseEntity) o;
-        return id != null && Objects.equals(id, course.id);
+        CourseEntity courseEntity = (CourseEntity) o;
+        return id != null && Objects.equals(id, courseEntity.id);
     }
 
     @Override
@@ -37,7 +36,9 @@ public class CourseEntity {
     }
 
 
-    // ###################### GENERATED ######################
+    // ######################
+    //      Generated       #
+    // ######################
 
     public Long getId() {
         return id;

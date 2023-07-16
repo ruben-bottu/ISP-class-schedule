@@ -2,7 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseBuilder;
 import org.hamcrest.core.Is;
@@ -42,7 +42,7 @@ public class ClassScheduleRestControllerTest {
     @Autowired
     private MockMvc classScheduleRestController;
     private CourseEntity algo, web1, bop, data1, testing;
-    private ClassGroup oneTi1, oneTi2, oneTi3, twoTi5;
+    private Group oneTi1, oneTi2, oneTi3, twoTi5;
 
     @Before
     public void setUp() {
@@ -52,10 +52,10 @@ public class ClassScheduleRestControllerTest {
         data1 = CourseBuilder.with(4L, "Data 1");
         testing = CourseBuilder.with(5L, "Testing");
 
-        oneTi1 = new ClassGroup(1L, "ME-1TI/1");
-        oneTi2 = new ClassGroup(2L, "ME-1TI/2");
-        oneTi3 = new ClassGroup(3L, "ME-1TI/3");
-        twoTi5 = new ClassGroup(4L, "ME-2TI/5");
+        oneTi1 = new Group(1L, "ME-1TI/1");
+        oneTi2 = new Group(2L, "ME-1TI/2");
+        oneTi3 = new Group(3L, "ME-1TI/3");
+        twoTi5 = new Group(4L, "ME-2TI/5");
     }
 
     @Test

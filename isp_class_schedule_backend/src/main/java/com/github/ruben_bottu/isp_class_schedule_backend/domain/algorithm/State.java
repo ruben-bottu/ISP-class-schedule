@@ -1,9 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassGroup;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseAndClassGroup;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.Pair;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,56 +10,56 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparingInt;
 
 public class State {
-    private final List<Pair<Course, List<ClassGroup>>> coursesWithClassGroups; // Constant
-    private final List<CourseAndClassGroup> combination; // Add one element at each level
+    private final List<List<CourseGroup>> courseGroupsGroupedByCourse; // Readonly
+    private final List<CourseGroup> combination; // Add one element at each level of the tree
 
-    private State(List<Pair<Course, List<ClassGroup>>> coursesWithClassGroups, List<CourseAndClassGroup> combination) {
-        this.coursesWithClassGroups = coursesWithClassGroups;
+    private State(List<List<CourseGroup>> courseGroupsGroupedByCourse, List<CourseGroup> combination) {
+        this.courseGroupsGroupedByCourse = courseGroupsGroupedByCourse;
         this.combination = combination;
     }
 
-    public State(List<Pair<Course, List<ClassGroup>>> coursesWithClassGroups) {
-        this(coursesWithClassGroups, new ArrayList<>());
+    public State(List<List<CourseGroup>> courseGroupsGroupedByCourse) {
+        this(courseGroupsGroupedByCourse, new ArrayList<>());
     }
 
     public int getDepth() {
         return combination.size();
     }
 
-    public CourseAndClassGroup getNewestElement() {
+    public CourseGroup getNewestElement() {
         return combination.get(combination.size() - 1);
     }
 
     public boolean isSolution() {
-        return combination.size() == coursesWithClassGroups.size();
+        return combination.size() == courseGroupsGroupedByCourse.size();
     }
 
     public List<State> successors() {
-        if (getDepth() == coursesWithClassGroups.size()) return Collections.emptyList();
-        var courseWithClassGroups = coursesWithClassGroups.get(getDepth());
-        var course = courseWithClassGroups.first;
-        var classGroups = courseWithClassGroups.second;
-        return classGroups.stream()
-                .map(classGroup -> createSuccessorState(course, classGroup))
-                .collect(Collectors.toList());
+        if (getDepth() == courseGroupsGroupedByCourse.size()) return Collections.emptyList();
+        var courseGroups = courseGroupsGroupedByCourse.get(getDepth());
+        return courseGroups.stream()
+                .map(this::createSuccessorState)
+                .toList();
     }
 
-    private State createSuccessorState(Course course, ClassGroup classGroup) {
+    private State createSuccessorState(CourseGroup courseGroup) {
         var shallowCopy = new ArrayList<>(combination);
-        var courseAndClassGroup = new CourseAndClassGroup(course, classGroup);
-        shallowCopy.add(courseAndClassGroup);
-        return new State(coursesWithClassGroups, shallowCopy);
+        shallowCopy.add(courseGroup);
+        return new State(courseGroupsGroupedByCourse, shallowCopy);
     }
 
-    public State sortByClassGroupCountAscending() {
-        var shallowCopy = new ArrayList<>(coursesWithClassGroups);
-        shallowCopy.sort(comparingInt(o -> o.second.size()));
+    public State sortByCourseGroupCountAscending() {
+        var shallowCopy = new ArrayList<>(courseGroupsGroupedByCourse);
+        shallowCopy.sort(comparingInt(List::size));
         return new State(shallowCopy, combination);
     }
 
-    // ###################### GENERATED ######################
 
-    public List<CourseAndClassGroup> getCombination() {
+    // ######################
+    //      Generated       #
+    // ######################
+
+    public List<CourseGroup> getCombination() {
         return combination;
     }
 

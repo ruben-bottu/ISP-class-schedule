@@ -4,7 +4,8 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
 
 import java.util.List;
 
-public interface CustomCourseRepository {
+public interface CustomClassRepository {
 
-    List<List<CourseGroup>> getCourseGroupsGroupedByCourse(List<Long> courseIds);
+    int countOverlaps(List<CourseGroup> list);
+    int countOverlapsBetween(CourseGroup element, List<CourseGroup> list);
 }

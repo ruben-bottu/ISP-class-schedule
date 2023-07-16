@@ -3,7 +3,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.lesson.LessonRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassRepository;
 import jakarta.validation.Validator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,8 @@ public class DomainConfiguration {
     }
 
     @Bean
-    public ClassScheduleService classScheduleService(CourseRepository courseRepo, LessonRepository lessonRepo, Validator validator, Search search) {
-        return new ClassScheduleService(courseRepo, lessonRepo, validator, search);
+    public ClassScheduleService classScheduleService(CourseRepository courseRepo, ClassRepository classRepo, Validator validator, Search search) {
+        return new ClassScheduleService(courseRepo, classRepo, validator, search);
     }
 
     @Bean

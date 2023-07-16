@@ -4,5 +4,5 @@ import java.util.List;
 
 public record ClassScheduleProposal(
         int overlapCount,
-        List<CourseAndClassGroup> combination
+        List<CourseGroup> combination
 ) {}

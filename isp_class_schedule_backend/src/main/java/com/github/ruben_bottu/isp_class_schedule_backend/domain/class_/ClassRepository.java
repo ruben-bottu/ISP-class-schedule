@@ -1,7 +1,7 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.domain.lesson;
+package com.github.ruben_bottu.isp_class_schedule_backend.domain.class_;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CustomLessonRepository;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.LessonEntity;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CustomClassRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LessonRepository extends PagingAndSortingRepository<LessonEntity, Long>, CustomLessonRepository {
+public interface ClassRepository extends PagingAndSortingRepository<ClassEntity, Long>, CustomClassRepository {
 
     @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
     String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds);
 
     @Query(nativeQuery = true, value = """
-            SELECT COUNT( DISTINCT EXTRACT(WEEK FROM l.start_timestamp) )
-            FROM lessons as l
-            WHERE l.course_id IN :courseIds
+            SELECT COUNT( DISTINCT EXTRACT(WEEK FROM c.start_timestamp) )
+            FROM class as c INNER JOIN course_group cg on c.course_group_id = cg.id
+            WHERE cg.course_id IN :courseIds
             """)
     int getNumberOfWeeksIn(List<Long> courseIds);
 

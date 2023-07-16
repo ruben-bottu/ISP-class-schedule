@@ -1,7 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleProposal;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseAndClassGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +32,10 @@ public class Search {
         return result;
     }*/
 
-    public List<ClassScheduleProposal> greedySearch(State startState, int solutionCount, ToIntFunction<List<CourseAndClassGroup>> countOverlaps) {
-        // By first using the most "constrained" courses – the ones with the least class groups –
+    public List<ClassScheduleProposal> greedySearch(State startState, int solutionCount, ToIntFunction<List<CourseGroup>> countOverlaps) {
+        // By first using the most "constrained" courses – the ones with the least groups –
         // we can reduce the size of the tree significantly
-        startState = startState.sortByClassGroupCountAscending();
+        startState = startState.sortByCourseGroupCountAscending();
         // The set is sorted in ascending order
         var fringe = new TreeSet<>(FringeComparator.getInstance());
         fringe.add(new Fringe(0, startState));
@@ -57,14 +57,14 @@ public class Search {
         return result;
     }
 
-    private static int countOverlaps(ToIntBiFunction<CourseAndClassGroup, List<CourseAndClassGroup>> countOverlapsBetween, Fringe parent, State successor) {
+    private static int countOverlaps(ToIntBiFunction<CourseGroup, List<CourseGroup>> countOverlapsBetween, Fringe parent, State successor) {
         return parent.overlapCount() + countOverlapsBetween.applyAsInt(successor.getNewestElement(), parent.state().getCombination());
     }
 
-    public static List<ClassScheduleProposal> greedySearchMemory(State startState, int solutionCount, ToIntBiFunction<CourseAndClassGroup, List<CourseAndClassGroup>> countOverlapsBetween) {
-        // By first using the most "constrained" courses – the ones with the least class groups –
+    public static List<ClassScheduleProposal> greedySearchMemory(State startState, int solutionCount, ToIntBiFunction<CourseGroup, List<CourseGroup>> countOverlapsBetween) {
+        // By first using the most "constrained" courses – the ones with the least groups –
         // we can reduce the size of the tree significantly
-        startState = startState.sortByClassGroupCountAscending();
+        startState = startState.sortByCourseGroupCountAscending();
         // The set is sorted in ascending order
         var fringe = new TreeSet<>(FringeComparator.getInstance());
         fringe.add(new Fringe(0, startState));

@@ -1,6 +1,6 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
-public record ClassGroup(
+public record Group(
         Long id,
         String name
 ) {
@@ -9,7 +9,7 @@ public record ClassGroup(
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassGroup that = (ClassGroup) o;
+        Group that = (Group) o;
 
         return id.equals(that.id);
     }

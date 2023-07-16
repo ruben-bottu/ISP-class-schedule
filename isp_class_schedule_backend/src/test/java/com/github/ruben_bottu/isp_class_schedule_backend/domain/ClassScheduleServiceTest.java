@@ -60,9 +60,25 @@ public class ClassScheduleServiceTest {
         return service.getProposals(contract);
     }
 
-    // ######################
-    // Proposals Course IDs #
-    // ######################
+    @Test
+    public void givenValidCourseIdsAndSolutionCount_whenGetProposalsIsCalled_thenProposalsAreReturned() {
+        var givenCourseIds = Arrays.asList(1L, 2L);
+        var expectedSolutionCount = properties.defaultSolutionCount();
+
+        when(validator.validate(any())).thenReturn(Collections.emptySet());
+        when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
+        // In reality a list with the given Courses and their corresponding ClassGroups would be returned
+        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
+        var result = getProposals(givenCourseIds, defaultSolutionCount);
+
+        assertThat(result).hasSize(expectedSolutionCount);
+    }
+
+
+    // #####################
+    // Proposal Course IDs #
+    // #####################
 
     @Test
     public void givenNoCourseIds_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
@@ -123,9 +139,10 @@ public class ClassScheduleServiceTest {
                 .isEqualTo("courseIds");
     }
 
-    // ##########################
-    // Proposals solution count #
-    // ##########################
+
+    // #########################
+    // Proposal solution count #
+    // #########################
 
     @Test
     public void givenSolutionCountOfZero_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
@@ -166,7 +183,7 @@ public class ClassScheduleServiceTest {
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseRepo.getCoursesWithClassGroups(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
         when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
         var result = getProposals(givenCourseIds, givenSolutionCount);
 
@@ -182,7 +199,7 @@ public class ClassScheduleServiceTest {
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseRepo.getCoursesWithClassGroups(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
         when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
         var result = getProposals(givenCourseIds, givenSolutionCount);
 

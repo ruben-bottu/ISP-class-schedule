@@ -1,7 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassGroup;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.Pair;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,47 +17,55 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Pair<Course, List<ClassGroup>>> getCoursesWithClassGroups(List<Long> courseIds) {
-        Map<Long, Pair<Course, List<ClassGroup>>> coursesWithClassGroupsMap = new LinkedHashMap<>();
+    public List<List<CourseGroup>> getCourseGroupsGroupedByCourse(List<Long> courseIds) {
+        Map<Long, List<CourseGroup>> courseIdWithCourseGroups = new LinkedHashMap<>();
 
         @SuppressWarnings("unchecked")
-        List<Pair<Course, List<ClassGroup>>> coursesWithClassGroups = entityManager.createQuery("""
-        SELECT DISTINCT
-                c.id AS cId,
-                c.name AS cName,
-                cg.id AS cgId,
-                cg.name AS cgName
-        FROM CourseEntity c JOIN LessonEntity l ON c.id = l.course.id
-            JOIN ClassGroupEntity cg ON l.classGroup.id = cg.id
-        WHERE c.id IN (:courseIds)
-        """)
+        List<List<CourseGroup>> courseGroupsGroupedByCourse = entityManager.createQuery("""
+                        SELECT DISTINCT
+                                cg.id AS cgId,
+                                c.id AS cId,
+                                c.name AS cName,
+                                g.id AS gId,
+                                g.name AS gName
+                        FROM CourseEntity c JOIN CourseGroupEntity cg ON c.id = cg.course.id
+                            JOIN GroupEntity g ON cg.group.id = g.id
+                        WHERE c.id IN (:courseIds)
+                        """)
                 .setParameter("courseIds", courseIds)
                 .unwrap(org.hibernate.query.Query.class)
-                .setTupleTransformer((tuple, aliases) -> transformTuple(tuple, coursesWithClassGroupsMap))
-                .setResultListTransformer(list -> transformList(coursesWithClassGroupsMap))
+                .setTupleTransformer((tuple, aliases) -> transformTuple(tuple, courseIdWithCourseGroups))
+                .setResultListTransformer(list -> transformList(courseIdWithCourseGroups))
                 .getResultList();
 
-        return coursesWithClassGroups;
+        return courseGroupsGroupedByCourse;
     }
 
-    private Object transformTuple(Object[] tuple, Map<Long, Pair<Course, List<ClassGroup>>> courseDTOListMap) {
+    private List<CourseGroup> transformTuple(Object[] tuple, Map<Long, List<CourseGroup>> courseIdWithCourseGroups) {
+        int index = -1;
 
-        Long courseId = (Long) tuple[0];
-        String courseName = (String) tuple[1];
-        Long classGroupId = (Long) tuple[2];
-        String classGroupName = (String) tuple[3];
+        // Order has to be the same as in query
+        Long courseGroupId = (Long) tuple[++index];
+        Long courseId = (Long) tuple[++index];
+        String courseName = (String) tuple[++index];
+        Long groupId = (Long) tuple[++index];
+        String groupName = (String) tuple[++index];
 
-        Pair<Course, List<ClassGroup>> courseWithClassGroups = courseDTOListMap.computeIfAbsent(
+        var course = new Course(courseId, courseName);
+        var group = new Group(groupId, groupName);
+        var courseGroup = new CourseGroup(courseGroupId, course, group);
+
+        List<CourseGroup> courseGroupsOfCourse = courseIdWithCourseGroups.computeIfAbsent(
                 courseId,
-                id -> Pair.of(new Course(courseId, courseName), new ArrayList<>())
+                id -> new ArrayList<>()
         );
 
-        courseWithClassGroups.second.add(new ClassGroup(classGroupId, classGroupName));
+        courseGroupsOfCourse.add(courseGroup);
 
-        return courseWithClassGroups;
+        return courseGroupsOfCourse;
     }
 
-    private List<Pair<Course, List<ClassGroup>>> transformList(Map<Long, Pair<Course, List<ClassGroup>>> courseDTOListMap) {
-        return new ArrayList<>(courseDTOListMap.values());
+    private List<List<CourseGroup>> transformList(Map<Long, List<CourseGroup>> courseIdWithCourseGroups) {
+        return new ArrayList<>(courseIdWithCourseGroups.values());
     }
 }

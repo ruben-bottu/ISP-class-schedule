@@ -1,8 +1,8 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
+import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.LessonEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.*;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
@@ -38,15 +38,15 @@ public class ClassScheduleRestController {
         return service.getAllCourses();
     }
 
-    @GetMapping("/lessons")
-    public Iterable<LessonEntity> allLessons() {
-        return service.getAllLessons();
+    @GetMapping("/classes")
+    public Iterable<ClassEntity> allClasses() {
+        return service.getAllClasses();
     }
 
-    @GetMapping("search-tree")
+    /*@GetMapping("search-tree")
     public String searchTreeToString() {
         return service.searchTreeToString();
-    }
+    }*/
 
     @GetMapping("proposals/{courseIds}")
     public List<ClassScheduleProposal> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", required = false) Integer solutionCount) {
