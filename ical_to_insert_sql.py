@@ -6,7 +6,7 @@ import re
 #### Reading from iCalendar file ####
 #####################################
 
-# utf-8 necessary to deal with accented names correctly
+# utf-8 necessary to deal with non-ASCII names correctly
 with open(sys.argv[1], encoding='utf-8') as input:
     calendar = ics.Calendar(input.read())
 

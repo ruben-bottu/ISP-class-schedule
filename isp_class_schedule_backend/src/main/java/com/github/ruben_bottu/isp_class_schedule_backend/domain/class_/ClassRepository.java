@@ -3,6 +3,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain.class_;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.CustomClassRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ClassRepository extends PagingAndSortingRepository<ClassEntity, Long>, CustomClassRepository {
+public interface ClassRepository extends JpaRepository<ClassEntity, Long>, CustomClassRepository {
 
     @Query(value = "SELECT get_combinations_with_collision_count_json(?1, ?2)", nativeQuery = true)
     String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds);
