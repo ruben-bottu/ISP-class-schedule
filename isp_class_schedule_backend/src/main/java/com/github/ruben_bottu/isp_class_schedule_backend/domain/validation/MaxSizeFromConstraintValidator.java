@@ -12,7 +12,15 @@ import java.io.InputStream;
 import java.util.Collection;
 
 public class MaxSizeFromConstraintValidator implements ConstraintValidator<MaxSizeFrom, Collection<?>> {
-    private String resource;
+
+    public static int maxCourseIdsSize = 0;
+
+    @Override
+    public boolean isValid(Collection<?> collection, ConstraintValidatorContext context) {
+        return collection.size() <= maxCourseIdsSize;
+    }
+
+    /*private String resource;
 
     @Override
     public void initialize(MaxSizeFrom maxSizeValue) {
@@ -36,7 +44,7 @@ public class MaxSizeFromConstraintValidator implements ConstraintValidator<MaxSi
     @Override
     public boolean isValid(Collection<?> collection, ConstraintValidatorContext context) {
         return collection.size() <= getMaxCourseIdsSize();
-    }
+    }*/
 
     /**
      * This class exists for mapping from YAML properties to object

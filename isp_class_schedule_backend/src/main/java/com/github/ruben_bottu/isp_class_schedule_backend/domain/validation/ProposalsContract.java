@@ -15,7 +15,7 @@ import java.util.List;
  * @param solutionCount
  * @param properties
  */
-public record ProposalsContract(@MaxSizeFrom(resource = "application.yml") @NoDuplicates List<@NotNull Long> courseIds,
+public record ProposalsContract(@MaxSizeFrom/*(resource = "application.yml")*/ @NoDuplicates List<@NotNull Long> courseIds,
                                 @PositiveOrZero Integer solutionCount, ClassScheduleProperties properties) {
 
     public ProposalsContract {

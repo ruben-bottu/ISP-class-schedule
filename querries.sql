@@ -636,3 +636,13 @@ CREATE OR REPLACE FUNCTION get_combinations_with_collision_count_json(row_limit 
 
 --SELECT get_combinations_with_collision_count_json(100, ARRAY [1, 2, 3, 4, 5]);
 SELECT get_combinations_with_collision_count_json(100, 1, 2, 3, 4, 5);
+
+ALTER TABLE course
+    ALTER COLUMN id SET DEFAULT nextval('course_seq');
+
+INSERT INTO course (name) VALUES 
+('Algoritmisch denken'),
+('Webontwikkeling 1'),
+('Basis van objectgericht programmeren'),
+('Databanken 1'),
+('Testing');

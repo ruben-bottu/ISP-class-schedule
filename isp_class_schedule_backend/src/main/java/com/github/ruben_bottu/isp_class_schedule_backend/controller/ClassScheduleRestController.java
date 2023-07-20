@@ -4,6 +4,7 @@ import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurat
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.*;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.MaxSizeFromConstraintValidator;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ public class ClassScheduleRestController {
     public ClassScheduleRestController(ClassScheduleService service, ClassScheduleConfigurationProperties properties) {
         this.service = service;
         this.properties = mapToDomain(properties);
+        // TODO make more safe, public static is a bad code smell
+        MaxSizeFromConstraintValidator.maxCourseIdsSize = properties.maxCourseIdsSize();
     }
 
     private static ClassScheduleProperties mapToDomain(ClassScheduleConfigurationProperties properties) {

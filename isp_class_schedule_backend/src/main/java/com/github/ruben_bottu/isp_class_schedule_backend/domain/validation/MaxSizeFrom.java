@@ -16,5 +16,5 @@ public @interface MaxSizeFrom {
 
     Class<? extends Payload>[] payload() default {};
 
-    String resource();
+    //String resource();
 }

@@ -17,7 +17,7 @@ public class CustomClassRepositoryImpl implements CustomClassRepository {
         String courseGroupIds = courseGroupsToCourseGroupIdStrings(list);
         String query = """
                 WITH selected_classes AS (
-                    SELECT id, start_timestamp, end_timestamp
+                    SELECT c.id, start_timestamp, end_timestamp
                     FROM (VALUES %s) AS i(course_id, group_id)
                         INNER JOIN course_group cg USING (course_id, group_id)
                         INNER JOIN class c ON cg.id = c.course_group_id
