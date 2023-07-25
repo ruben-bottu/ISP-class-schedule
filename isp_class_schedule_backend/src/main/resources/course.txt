@@ -1,5 +1,0 @@
-Algoritmisch denken
-Webontwikkeling 1
-Basis van objectgericht programmeren
-Databanken 1
-Testing

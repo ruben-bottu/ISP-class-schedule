@@ -8,7 +8,10 @@ import org.hibernate.Hibernate;
 import java.util.Objects;
 
 @Entity
-@Table(name = "course_group")
+@Table(
+        name = "course_group",
+        uniqueConstraints = @UniqueConstraint(columnNames = { "course_id", "group_id" })
+)
 public class CourseGroupEntity {
 
     @Id
@@ -46,6 +49,15 @@ public class CourseGroupEntity {
         return getClass().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "CourseGroupEntity{" +
+                "id=" + id +
+                ", courseName=" + getCourseName() +
+                ", groupName=" + getGroupName() +
+                '}';
+    }
+
 
     // ######################
     //      Generated       #
@@ -73,14 +85,5 @@ public class CourseGroupEntity {
 
     public void setGroup(GroupEntity group) {
         this.group = group;
-    }
-
-    @Override
-    public String toString() {
-        return "CourseGroupEntity{" +
-                "id=" + id +
-                ", courseName=" + getCourseName() +
-                ", groupName=" + getGroupName() +
-                '}';
     }
 }

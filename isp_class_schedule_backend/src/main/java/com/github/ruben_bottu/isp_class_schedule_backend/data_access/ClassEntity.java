@@ -2,15 +2,19 @@ package com.github.ruben_bottu.isp_class_schedule_backend.data_access;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "class")
+@Table(
+        name = "class",
+        uniqueConstraints = @UniqueConstraint(columnNames = { "start_timestamp", "course_group_id" })
+)
+@Check(constraints = "start_timestamp <= end_timestamp")
 public class ClassEntity {
 
     @Id
@@ -51,6 +55,17 @@ public class ClassEntity {
         return getClass().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "ClassEntity{" +
+                "id=" + id +
+                ", startTimestamp=" + startTimestamp +
+                ", endTimestamp=" + endTimestamp +
+                ", courseName=" + getCourseName() +
+                ", groupName=" + getGroupName() +
+                '}';
+    }
+
 
     // ######################
     //      Generated       #
@@ -86,16 +101,5 @@ public class ClassEntity {
 
     public void setCourseGroup(CourseGroupEntity courseGroup) {
         this.courseGroup = courseGroup;
-    }
-
-    @Override
-    public String toString() {
-        return "ClassEntity{" +
-                "id=" + id +
-                ", startTimestamp=" + startTimestamp +
-                ", endTimestamp=" + endTimestamp +
-                ", courseName=" + getCourseName() +
-                ", groupName=" + getGroupName() +
-                '}';
     }
 }

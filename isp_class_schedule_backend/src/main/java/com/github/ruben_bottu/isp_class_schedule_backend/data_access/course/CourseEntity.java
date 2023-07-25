@@ -15,11 +15,11 @@ public class CourseEntity {
     private Long id;
 
     @NotBlank(message = "name.is.missing")
+    @Column(unique = true)
     private String name;
 
     // https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
     /*@OneToMany(mappedBy = "classGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
     private List<ClassEntity> classes;*/
 
     @Override
