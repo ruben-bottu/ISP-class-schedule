@@ -2,6 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.MaxSizeConstraintValidator;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -47,8 +48,9 @@ public class ClassScheduleServiceTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validatorValidation = factory.getValidator();
         properties = createClassScheduleProperties();
-        // Shorthand for better readability
+        // Shorthand for better readability of tests
         defaultSolutionCount = properties.defaultSolutionCount();
+        MaxSizeConstraintValidator.maxSize = properties.maxCourseIdsSize();
     }
 
     private static ClassScheduleProperties createClassScheduleProperties() {
@@ -141,7 +143,7 @@ public class ClassScheduleServiceTest {
 
 
     // #########################
-    // Proposal solution count #
+    // Proposal Solution Count #
     // #########################
 
     @Test

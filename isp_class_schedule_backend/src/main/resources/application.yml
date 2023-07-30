@@ -16,7 +16,7 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: classpath:init-data/setup.sql, classpath:init-data/load.sql, classpath:init-data/insert-into-select.sql
+      data-locations: classpath:init-data/setup.sql, classpath:init-data/load.sql, classpath:init-data/insert.sql
 
 logging:
   level:

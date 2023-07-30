@@ -33,13 +33,6 @@ FROM course_group cg
          INNER JOIN course c ON cg.course_id = c.id
          INNER JOIN init_data t ON g.name = t.group_name AND c.name = t.course_name;
 
-
-
-INSERT INTO class (start_timestamp, end_timestamp, course_group_id) VALUES ('2022-06-26 10:00:01', '2022-06-26 10:00:00', 1000);
-
-
-
-
 -- Possible performance improvement:
 /*CREATE TEMPORARY TABLE temp_course_group ON COMMIT DROP AS
 SELECT c.id AS course_id, g.id AS group_id, start_timestamp, end_timestamp
