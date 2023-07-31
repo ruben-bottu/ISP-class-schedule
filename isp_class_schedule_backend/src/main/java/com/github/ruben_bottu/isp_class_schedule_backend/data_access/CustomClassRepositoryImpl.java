@@ -60,11 +60,12 @@ public class CustomClassRepositoryImpl implements CustomClassRepository {
         // Needs to be a native query because OVERLAPS is not supported by JPQL/HQL
         String query = """
                 SELECT count(*) AS overlap_count
-                FROM class c1 INNER JOIN class c2 ON c1.course_group_id = :courseGroupId
-                WHERE c2.course_group_id IN (:courseGroupIds) AND
+                FROM class c1 CROSS JOIN class c2
+                WHERE c1.course_group_id = ?1 AND
+                      c2.course_group_id IN (?2) AND
                       (c1.start_timestamp, c1.end_timestamp) OVERLAPS
                       (c2.start_timestamp, c2.end_timestamp);
-                        """;
+                            """;
         Object result = entityManager.createNativeQuery(query)
                 .setParameter("courseGroupId", courseGroup.id())
                 .setParameter("courseGroupIds", courseGroupIds)

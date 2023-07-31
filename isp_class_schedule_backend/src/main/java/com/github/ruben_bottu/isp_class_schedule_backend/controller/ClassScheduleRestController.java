@@ -23,7 +23,7 @@ public class ClassScheduleRestController {
     public ClassScheduleRestController(ClassScheduleService service, ClassScheduleConfigurationProperties properties) {
         this.service = service;
         this.properties = mapToDomain(properties);
-        MaxSizeConstraintValidator.maxSize = properties.maxCourseIdsSize();
+        MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
     }
 
     private static ClassScheduleProperties mapToDomain(ClassScheduleConfigurationProperties properties) {

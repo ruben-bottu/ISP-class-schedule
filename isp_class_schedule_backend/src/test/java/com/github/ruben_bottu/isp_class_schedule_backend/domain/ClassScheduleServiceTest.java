@@ -50,7 +50,7 @@ public class ClassScheduleServiceTest {
         properties = createClassScheduleProperties();
         // Shorthand for better readability of tests
         defaultSolutionCount = properties.defaultSolutionCount();
-        MaxSizeConstraintValidator.maxSize = properties.maxCourseIdsSize();
+        MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
     }
 
     private static ClassScheduleProperties createClassScheduleProperties() {
