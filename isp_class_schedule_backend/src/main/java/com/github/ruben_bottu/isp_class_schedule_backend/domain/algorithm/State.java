@@ -79,7 +79,7 @@ public class State {
 
     @Override
     public String toString() {
-        return "SearchAlgorithmState{" +
+        return "State{" +
                 "combination=" + combination +
                 '}';
     }

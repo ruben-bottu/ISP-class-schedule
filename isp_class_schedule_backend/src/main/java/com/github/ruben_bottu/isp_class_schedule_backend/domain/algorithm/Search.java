@@ -11,27 +11,6 @@ import java.util.function.ToIntFunction;
 
 public class Search {
 
-    // Uses IntObjPair instead of dedicated type
-    /*public static List<ClassScheduleProposalDTO> greedySearch(SearchAlgorithmState startState, int numberOfSolutions, ToIntFunction<List<CourseAndClassGroupDTO>> countOverlaps) {
-        NavigableSet<IntObjPair<SearchAlgorithmState>> fringe = new TreeSet<>(SearchAlgorithmFringeComparator.getInstance());
-        fringe.add(IntObjPair.of(0, startState));
-        List<ClassScheduleProposalDTO> result = new ArrayList<>();
-
-        while (!fringe.isEmpty()) {
-            var current = fringe.pollFirst();
-            var state = current.object;
-            if (state.isSolution()) {
-                result.add(new ClassScheduleProposalDTO(current.integer, state.getCombination()));
-                if (result.size() == numberOfSolutions) return result;
-            }
-            for (SearchAlgorithmState successor : state.successors()) {
-                int overlapCount = countOverlaps.applyAsInt(successor.getCombination());
-                fringe.add(IntObjPair.of(overlapCount, successor));
-            }
-        }
-        return result;
-    }*/
-
     public List<ClassScheduleProposal> greedySearch(State startState, int solutionCount, ToIntFunction<List<CourseGroup>> countOverlaps) {
         // By first using the most "constrained" courses – the ones with the least courseGroups –
         // we can reduce the size of the tree significantly
@@ -61,7 +40,7 @@ public class Search {
         return parent.overlapCount() + countOverlapsBetween.applyAsInt(successor.getNewestElement(), parent.state().getCombination());
     }
 
-    public static List<ClassScheduleProposal> greedySearchMemory(State startState, int solutionCount, ToIntBiFunction<CourseGroup, List<CourseGroup>> countOverlapsBetween) {
+    public List<ClassScheduleProposal> greedySearchMemory(State startState, int solutionCount, ToIntBiFunction<CourseGroup, List<CourseGroup>> countOverlapsBetween) {
         // By first using the most "constrained" courses – the ones with the least courseGroups –
         // we can reduce the size of the tree significantly
         startState = startState.sortByCourseGroupCountAscending();

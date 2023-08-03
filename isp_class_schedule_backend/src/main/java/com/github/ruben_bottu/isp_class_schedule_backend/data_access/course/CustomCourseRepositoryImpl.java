@@ -28,8 +28,9 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
                                 c.name AS cName,
                                 g.id AS gId,
                                 g.name AS gName
-                        FROM CourseEntity c JOIN CourseGroupEntity cg ON c.id = cg.course.id
-                            JOIN GroupEntity g ON cg.group.id = g.id
+                        FROM CourseEntity c
+                            INNER JOIN CourseGroupEntity cg ON c.id = cg.course.id
+                            INNER JOIN GroupEntity g ON cg.group.id = g.id
                         WHERE c.id IN (:courseIds)
                         """)
                 .setParameter("courseIds", courseIds)
@@ -59,7 +60,6 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
                 courseId,
                 id -> new ArrayList<>()
         );
-
         courseGroupsOfCourse.add(courseGroup);
 
         return courseGroupsOfCourse;

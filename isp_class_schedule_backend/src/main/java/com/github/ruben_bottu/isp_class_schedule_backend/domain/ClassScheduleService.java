@@ -61,26 +61,23 @@ public class ClassScheduleService {
         return root.toString();
     }*/
 
-    private int countOverlaps(List<CourseGroup> list) {
-        if (list.size() <= 1) return 0;
-        return classRepo.countOverlaps(list);
+    private int countOverlaps(List<CourseGroup> courseGroups) {
+        if (courseGroups.size() <= 1) return 0;
+        // return classRepo.countOverlaps(courseGroups);
+        List<Long> courseGroupIds = courseGroups.stream().map(CourseGroup::id).toList();
+        return classRepo.countOverlaps(courseGroupIds);
+    }
+
+    private int countOverlapsBetween(CourseGroup courseGroup, List<CourseGroup> courseGroups) {
+        if (courseGroups.isEmpty()) return 0;
+        List<Long> courseGroupIds = courseGroups.stream().map(CourseGroup::id).toList();
+        return classRepo.countOverlapsBetween(courseGroup.id(), courseGroupIds);
     }
 
     private boolean allCourseIdsExist(List<Long> courseIds) {
         int foundCourseIdsCount = courseRepo.countByIdIn(courseIds);
         return courseIds.size() == foundCourseIdsCount;
     }
-
-    /*public List<ClassScheduleProposalDTO> getProposals(List<Long> courseIds, int solutionCount) {
-        if (solutionCount < 0) throw new IllegalArgumentException("Number of solutions cannot be negative, given: " + solutionCount);
-        if (courseIds.isEmpty() || solutionCount == 0) return Collections.emptyList();
-        if (listContainsDuplicates(courseIds) || !allCourseIdsExist(courseIds)) throw invalidCourseIdsException();
-        int numberOfSolutions = Math.min(solutionCount, MAX_NUMBER_OF_SOLUTIONS);
-
-        var coursesWithClassGroups = courseRepo.getCoursesWithClassGroups(courseIds);
-        var algoState = new SearchAlgorithmState(coursesWithClassGroups);
-        return Search.greedySearch(algoState, numberOfSolutions, this::countOverlaps);
-    }*/
 
     private <C> void validateConstraintsOf(C contract, String exceptionMessage) {
         var violations = validator.validate(contract);
@@ -99,6 +96,7 @@ public class ClassScheduleService {
 
         var courseGroups = courseRepo.getCourseGroupsGroupedByCourse(courseIds);
         var algorithmState = new State(courseGroups);
-        return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
+        // return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
+        return search.greedySearchMemory(algorithmState, solutionCount, this::countOverlapsBetween);
     }
 }
