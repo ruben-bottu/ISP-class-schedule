@@ -6,4 +6,5 @@ public record CourseGroup(
         Long id,
         Course course,
         Group group
-) {}
+) {
+}

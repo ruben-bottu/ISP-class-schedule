@@ -1,15 +1,14 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.State;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassSummary;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,12 +30,12 @@ public class ClassScheduleService {
         return classRepo.getCombinationsWithCollisionCountJson(rowLimit, courseIds);
     }
 
-    public Iterable<CourseEntity> getAllCourses() {
-        return courseRepo.findAll(Sort.unsorted());
+    public List<Course> getAllCourses() {
+        return courseRepo.getAll();
     }
 
-    public Iterable<ClassEntity> getAllClasses() {
-        return classRepo.findAll(Sort.unsorted());
+    public List<ClassSummary> getClassesByCourseGroupIdIn(List<Long> courseGroupIds) {
+        return classRepo.getByCourseGroupIdIn(courseGroupIds);
     }
 
     /*public String searchTreeToString() {
@@ -96,7 +95,7 @@ public class ClassScheduleService {
 
         var courseGroups = courseRepo.getCourseGroupsGroupedByCourse(courseIds);
         var algorithmState = new State(courseGroups);
-        // return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
-        return search.greedySearchMemory(algorithmState, solutionCount, this::countOverlapsBetween);
+        return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
+        // return search.greedySearchMemory(algorithmState, solutionCount, this::countOverlapsBetween);
     }
 }

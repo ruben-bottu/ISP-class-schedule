@@ -1,9 +1,12 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.*;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleProperties;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleProposal;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.NotFoundException;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassSummary;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.MaxSizeConstraintValidator;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
@@ -36,13 +39,13 @@ public class ClassScheduleRestController {
     }
 
     @GetMapping("/courses")
-    public Iterable<CourseEntity> allCourses() {
+    public List<Course> allCourses() {
         return service.getAllCourses();
     }
 
-    @GetMapping("/classes")
-    public Iterable<ClassEntity> allClasses() {
-        return service.getAllClasses();
+    @GetMapping("/course-groups/{courseGroupIds}/classes")
+    public List<ClassSummary> getClassesByCourseGroupIdIn(@PathVariable List<Long> courseGroupIds) {
+        return service.getClassesByCourseGroupIdIn(courseGroupIds);
     }
 
     /*@GetMapping("search-tree")
@@ -52,6 +55,7 @@ public class ClassScheduleRestController {
 
     @GetMapping("proposals/{courseIds}")
     public List<ClassScheduleProposal> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", required = false) Integer solutionCount) {
+        // solutionCount may be null!
         var contract = new ProposalsContract(courseIds, solutionCount, properties);
         return service.getProposals(contract);
     }

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface CustomCourseRepository {
 
+    // TODO move to CourseGroupRepository
     List<List<CourseGroup>> getCourseGroupsGroupedByCourse(List<Long> courseIds);
 }

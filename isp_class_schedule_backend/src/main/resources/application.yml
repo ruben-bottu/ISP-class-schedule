@@ -11,6 +11,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: isp_class_schedule
         generate_statistics: true
+        integrator_provider: com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassImportIntegratorIntegratorProvider
     show-sql: true
     defer-datasource-initialization: true
   sql:

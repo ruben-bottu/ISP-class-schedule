@@ -45,7 +45,7 @@ public class CustomCourseRepositoryImpl implements CustomCourseRepository {
     private List<CourseGroup> transformTuple(Object[] tuple, Map<Long, List<CourseGroup>> courseIdWithCourseGroups) {
         int index = -1;
 
-        // Order has to be the same as in query
+        // Order has to be the same as in SELECT
         Long courseGroupId = (Long) tuple[++index];
         Long courseId = (Long) tuple[++index];
         String courseName = (String) tuple[++index];
