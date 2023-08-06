@@ -2,6 +2,7 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm.Search;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroupRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.MaxSizeConstraintValidator;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
@@ -30,9 +31,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClassScheduleServiceTest {
-
     @Mock
     private CourseRepository courseRepo;
+    @Mock
+    private CourseGroupRepository courseGroupRepo;
     @Mock
     private Validator validator;
     @Mock
@@ -70,7 +72,7 @@ public class ClassScheduleServiceTest {
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
         when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
         var result = getProposals(givenCourseIds, defaultSolutionCount);
 
@@ -185,7 +187,7 @@ public class ClassScheduleServiceTest {
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
         when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
         var result = getProposals(givenCourseIds, givenSolutionCount);
 
@@ -201,7 +203,7 @@ public class ClassScheduleServiceTest {
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseRepo.getCourseGroupsGroupedByCourse(givenCourseIds)).thenReturn(Collections.emptyList());
+        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
         when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
         var result = getProposals(givenCourseIds, givenSolutionCount);
 

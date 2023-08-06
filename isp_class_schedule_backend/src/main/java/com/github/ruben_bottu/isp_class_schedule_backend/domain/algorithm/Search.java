@@ -1,7 +1,7 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.domain.algorithm;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleProposal;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroup;
 
 import java.util.ArrayList;
 import java.util.List;

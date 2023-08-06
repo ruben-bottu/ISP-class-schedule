@@ -1,10 +1,9 @@
 package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
-import com.github.ruben_bottu.isp_class_schedule_backend.data_access.course.CourseEntity;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseBuilder;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,20 +36,21 @@ public class ClassScheduleRestControllerTest {
     private static final String PROPOSALS_PATH = "/proposals";
     @MockBean
     private ClassScheduleService service;
+    // This field also needs to be mocked, even though it's not used in the tests
     @MockBean
     private ClassScheduleConfigurationProperties properties;
     @Autowired
     private MockMvc classScheduleRestController;
-    private CourseEntity algo, web1, bop, data1, testing;
+    private Course algo, web1, bop, data1, testing;
     private Group oneTi1, oneTi2, oneTi3, twoTi5;
 
     @Before
     public void setUp() {
-        algo = CourseBuilder.with(1L, "Algo");
-        web1 = CourseBuilder.with(2L, "Web 1");
-        bop = CourseBuilder.with(3L, "BOP");
-        data1 = CourseBuilder.with(4L, "Data 1");
-        testing = CourseBuilder.with(5L, "Testing");
+        algo = new Course(1L, "Algo");
+        web1 = new Course(2L, "Web 1");
+        bop = new Course(3L, "BOP");
+        data1 = new Course(4L, "Data 1");
+        testing = new Course(5L, "Testing");
 
         oneTi1 = new Group(1L, "ME-1TI/1");
         oneTi2 = new Group(2L, "ME-1TI/2");
@@ -58,8 +58,7 @@ public class ClassScheduleRestControllerTest {
         twoTi5 = new Group(4L, "ME-2TI/5");
     }
 
-    // TODO uncomment
-    /*@Test
+    @Test
     public void givenCourses_whenGetRequestForAllCourses_thenJsonWithAllCoursesIsReturned() throws Exception {
         var given = Arrays.asList(algo, web1, bop, data1, testing);
         when(service.getAllCourses()).thenReturn(given);
@@ -67,9 +66,9 @@ public class ClassScheduleRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name", Is.is(algo.getName())))
-                .andExpect(jsonPath("$[1].name", Is.is(web1.getName())));
-    }*/
+                .andExpect(jsonPath("$[0].name", Is.is(algo.name())))
+                .andExpect(jsonPath("$[1].name", Is.is(web1.name())));
+    }
 
     @Test
     public void givenNoCourseIds_whenGetRequestForProposals_thenStatus404NotFoundIsReturned() throws Exception {
@@ -86,7 +85,7 @@ public class ClassScheduleRestControllerTest {
     // The default value is used instead of the incorrect Query Parameter
     @Test
     public void givenInvalidQueryParameter_whenGetRequestForProposals_thenStatus200OkIsReturned() throws Exception {
-        var validCourseIds = Stream.of(algo, web1, bop).map(CourseEntity::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var validCourseIds = Stream.of(algo, web1, bop).map(Course::id).map(id -> Long.toString(id)).collect(Collectors.joining(","));
         var validCount = "5";
         classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?limit=" + validCount))
                 .andDo(print()).andExpect(status().isOk());
@@ -94,7 +93,7 @@ public class ClassScheduleRestControllerTest {
 
     @Test
     public void givenInvalidCount_whenGetRequestForProposals_thenStatus400BadRequestIsReturned() throws Exception {
-        var validCourseIds = Stream.of(algo, web1, bop).map(CourseEntity::getId).map(id -> Long.toString(id)).collect(Collectors.joining(","));
+        var validCourseIds = Stream.of(algo, web1, bop).map(Course::id).map(id -> Long.toString(id)).collect(Collectors.joining(","));
         var invalidCount = "sj1m5g";
         classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?count=" + invalidCount))
                 .andDo(print()).andExpect(status().isBadRequest());

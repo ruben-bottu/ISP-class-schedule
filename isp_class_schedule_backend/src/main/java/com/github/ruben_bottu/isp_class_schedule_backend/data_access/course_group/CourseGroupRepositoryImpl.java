@@ -1,23 +1,26 @@
-package com.github.ruben_bottu.isp_class_schedule_backend.data_access.course;
+package com.github.ruben_bottu.isp_class_schedule_backend.data_access.course_group;
 
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.CourseGroup;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroupRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomCourseRepositoryImpl implements CustomCourseRepository {
+@Component
+public class CourseGroupRepositoryImpl implements CourseGroupRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<List<CourseGroup>> getCourseGroupsGroupedByCourse(List<Long> courseIds) {
+    public List<List<CourseGroup>> getGroupedByCourseIn(List<Long> courseIds) {
         Map<Long, List<CourseGroup>> courseIdWithCourseGroups = new LinkedHashMap<>();
 
         @SuppressWarnings("unchecked")

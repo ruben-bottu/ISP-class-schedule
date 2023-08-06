@@ -6,6 +6,8 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassSumm
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroup;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroupRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -15,12 +17,14 @@ import java.util.List;
 
 public class ClassScheduleService {
     private final CourseRepository courseRepo;
+    private final CourseGroupRepository courseGroupRepo;
     private final ClassRepository classRepo;
     private final Validator validator;
     private final Search search;
 
-    public ClassScheduleService(CourseRepository courseRepo, ClassRepository classRepo, Validator validator, Search search) {
+    public ClassScheduleService(CourseRepository courseRepo, CourseGroupRepository courseGroupRepo, ClassRepository classRepo, Validator validator, Search search) {
         this.courseRepo = courseRepo;
+        this.courseGroupRepo = courseGroupRepo;
         this.classRepo = classRepo;
         this.validator = validator;
         this.search = search;
@@ -93,7 +97,7 @@ public class ClassScheduleService {
         validateConstraintsOf(contract, "ProposalsContract");
         if (!allCourseIdsExist(courseIds)) throw new NotFoundException("courseIds", "Invalid course IDs");
 
-        var courseGroups = courseRepo.getCourseGroupsGroupedByCourse(courseIds);
+        var courseGroups = courseGroupRepo.getGroupedByCourseIn(courseIds);
         var algorithmState = new State(courseGroups);
         return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
         // return search.greedySearchMemory(algorithmState, solutionCount, this::countOverlapsBetween);
