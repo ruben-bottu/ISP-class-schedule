@@ -1,17 +1,17 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=isp_class_schedule
-    username: postgres
-    password: t
+    url: ${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${DB_DEFAULT_SCHEMA}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_schema: isp_class_schedule
-        generate_statistics: true
+        default_schema: ${DB_DEFAULT_SCHEMA}
         integrator_provider: com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassImportIntegratorIntegratorProvider
+        generate_statistics: true
     show-sql: true
     defer-datasource-initialization: true
   sql:
@@ -27,4 +27,3 @@ class-schedule:
   default-solution-count: 10
   max-solution-count: 20
   max-course-ids-size: 30
-

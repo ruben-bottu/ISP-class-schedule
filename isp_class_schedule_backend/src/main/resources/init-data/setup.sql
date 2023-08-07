@@ -1,3 +1,4 @@
+-- UNLOGGED and TRUNCATE commands are PostgreSQL specific
 CREATE UNLOGGED TABLE IF NOT EXISTS init_data
 (
     start_timestamp TIMESTAMP    NOT NULL,
