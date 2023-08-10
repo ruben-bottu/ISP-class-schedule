@@ -12,6 +12,8 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.Propo
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,9 +44,9 @@ public class ClassScheduleService {
         return classRepo.getByCourseGroupIdIn(courseGroupIds);
     }
 
-    /*public String searchTreeToString() {
-        var coursesWithGroups = courseRepo.getCourseGroupsGroupedByCourse(List.of(1L,3L,4L,5L));
-        coursesWithGroups.sort((o1, o2) -> (int) (o1.first.id() - o2.first.id()));
+    public String searchTreeToString() {
+        var courseGroupsGroupedByCourse = courseGroupRepo.getGroupedByCourseIn(List.of(1L, 101L, 151L, 201L));
+        courseGroupsGroupedByCourse.sort((lst1, lst2) -> (int) (lst1.get(0).course().id() - lst2.get(0).course().id()));
         var root = new TreeNode("empty", new ArrayList<>());
         var fringe = new ArrayDeque<TreeNode>();
         fringe.add(root);
@@ -52,17 +54,17 @@ public class ClassScheduleService {
         while (!fringe.isEmpty()) {
             var current = fringe.remove();
             int depth = (int) current.name().chars().filter(ch -> ch == '(').count();
-            if (depth == coursesWithGroups.size()) continue;
-            var courseWithGroups = coursesWithGroups.get(depth);
-            for (Group group : courseWithGroups.second) {
-                String data = current.name() + " (" + courseWithGroups.first.id() + "," + group.id() + ")";
+            if (depth == courseGroupsGroupedByCourse.size()) continue;
+            var courseGroups = courseGroupsGroupedByCourse.get(depth);
+            for (CourseGroup courseGroup : courseGroups) {
+                String data = current.name() + " (" + courseGroup.course().id() + "," + courseGroup.group().id() + ")";
                 var node = new TreeNode(data, new ArrayList<>());
                 current.children().add(node);
                 fringe.add(node);
             }
         }
         return root.toString();
-    }*/
+    }
 
     private int countOverlaps(List<CourseGroup> courseGroups) {
         if (courseGroups.size() <= 1) return 0;

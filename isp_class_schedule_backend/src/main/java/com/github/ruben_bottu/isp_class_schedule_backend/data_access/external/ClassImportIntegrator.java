@@ -62,7 +62,7 @@ public class ClassImportIntegrator implements Integrator {
      * @param bootstrapContext Hibernate bootstrap context
      * @param sessionFactory   Hibernate session factory
      */
-    // CHANGED by Ruben Bottu: refactored deprecated (since 6.0) integrate method to new version
+    // CHANGED by Ruben Bottu: refactored deprecated integrate method to new version
     @Override
     public void integrate(
             Metadata metadata,

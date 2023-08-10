@@ -48,10 +48,10 @@ public class ClassScheduleRestController {
         return service.getClassesByCourseGroupIdIn(courseGroupIds);
     }
 
-    /*@GetMapping("search-tree")
+    @GetMapping("search-tree")
     public String searchTreeToString() {
         return service.searchTreeToString();
-    }*/
+    }
 
     @GetMapping("proposals/{courseIds}")
     public List<ClassScheduleProposal> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", required = false) Integer solutionCount) {

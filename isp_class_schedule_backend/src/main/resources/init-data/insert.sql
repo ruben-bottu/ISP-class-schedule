@@ -11,7 +11,6 @@ ALTER TABLE course_group
 ALTER TABLE class
     ALTER COLUMN id SET DEFAULT nextval('class_seq');
 
-
 INSERT INTO course (name)
 SELECT DISTINCT course_name
 FROM init_data;
@@ -26,24 +25,23 @@ FROM "group" g
          INNER JOIN init_data t ON g.name = t.group_name
          INNER JOIN course c ON t.course_name = c.name;
 
+-- DISTINCT is necessary here because in our dataset there are duplicate classes
+-- where only the description differs. Since we consider these classes to all be
+-- the same class, DISTINCT is used.
 INSERT INTO class (start_timestamp, end_timestamp, course_group_id)
-SELECT start_timestamp, end_timestamp, cg.id
+SELECT DISTINCT start_timestamp, end_timestamp, cg.id
 FROM course_group cg
          INNER JOIN "group" g ON cg.group_id = g.id
          INNER JOIN course c ON cg.course_id = c.id
          INNER JOIN init_data t ON g.name = t.group_name AND c.name = t.course_name;
 
--- Possible performance improvement:
-/*CREATE TEMPORARY TABLE temp_course_group ON COMMIT DROP AS
-SELECT c.id AS course_id, g.id AS group_id, start_timestamp, end_timestamp
-FROM "group" g
-         INNER JOIN temp_data t ON g.name = t.group_name
-         INNER JOIN course c ON t.course_name = c.name;
+/*Using ANALYSE EXPLAIN in PostgreSQL
 
-INSERT INTO course_group (course_id, group_id)
-SELECT DISTINCT t.course_id, t.group_id
-FROM temp_course_group t;
+Queries without temp table:
+    course_group:       Insert on course_group  (cost=30.83..33.03 rows=0 width=0)
+    class:              Insert on class  (cost=33.75..42.26 rows=0 width=0)
 
-INSERT INTO class (start_timestamp, end_timestamp, course_group_id)
-SELECT t.start_timestamp, t.end_timestamp, cg.id
-FROM course_group cg INNER JOIN temp_course_group t USING (course_id, group_id);*/
+Queries with temp table:
+    create temp table:  Hash Join  (cost=3.15..27.05 rows=756 width=32)
+    course_group:       Insert on course_group  (cost=30.40..34.90 rows=0 width=0)
+    class:              Insert on class  (cost=32.98..33.02 rows=0 width=0)*/
