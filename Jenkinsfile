@@ -12,7 +12,7 @@ spec:
   - name: alpine
     image: alpine:latest
     command:
-    - cat
+      - cat
     tty: true
 '''
         }
