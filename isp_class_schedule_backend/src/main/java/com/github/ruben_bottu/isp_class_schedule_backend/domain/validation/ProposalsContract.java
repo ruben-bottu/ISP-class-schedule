@@ -14,10 +14,11 @@ import java.util.List;
  * @param properties
  */
 public record ProposalsContract(@MaxSize @NoDuplicates List<@NotNull Long> courseIds,
-                                @PositiveOrZero Integer solutionCount, ClassScheduleProperties properties) {
+                                @PositiveOrZero int solutionCount, ClassScheduleProperties properties) {
 
     public ProposalsContract {
-        solutionCount = (solutionCount == null)
+        // -1 is interpreted as the "empty" value here, so it receives the default
+        solutionCount = (solutionCount == -1)
                 ? properties.defaultSolutionCount()
                 : Math.min(solutionCount, properties.maxSolutionCount());
     }

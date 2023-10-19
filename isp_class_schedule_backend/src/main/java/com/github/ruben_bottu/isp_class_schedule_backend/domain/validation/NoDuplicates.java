@@ -3,11 +3,12 @@ package com.github.ruben_bottu.isp_class_schedule_backend.domain.validation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 
-@Constraint(validatedBy = NoDuplicatesConstraintValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Constraint(validatedBy = NoDuplicatesConstraintValidator.class)
 public @interface NoDuplicates {
     String message() default "{beancheck.duplicates}";
 

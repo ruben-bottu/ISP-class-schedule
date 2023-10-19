@@ -43,15 +43,12 @@ public class ClassScheduleServiceTest {
     private ClassScheduleService service;
     private static Validator validatorValidation;
     private static ClassScheduleProperties properties;
-    private static int defaultSolutionCount;
 
     @BeforeClass
     public static void setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validatorValidation = factory.getValidator();
         properties = createClassScheduleProperties();
-        // Shorthand for better readability of tests
-        defaultSolutionCount = properties.defaultSolutionCount();
         MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
     }
 
@@ -64,19 +61,27 @@ public class ClassScheduleServiceTest {
         return service.getProposals(contract);
     }
 
+    private ClassScheduleProposal buildProposal(int overlapCount) {
+        return new ClassScheduleProposal(overlapCount, new ArrayList<>());
+    }
+
+    private List<ClassScheduleProposal> validProposalsWithSize(int expectedSolutionCount) {
+        return IntStream.range(0, expectedSolutionCount).mapToObj(this::buildProposal).toList();
+    }
+
     @Test
     public void givenValidCourseIdsAndSolutionCount_whenGetProposalsIsCalled_thenProposalsAreReturned() {
-        var givenCourseIds = Arrays.asList(1L, 2L);
-        var expectedSolutionCount = properties.defaultSolutionCount();
+        var validCourseIds = Arrays.asList(1L, 2L);
+        var validSolutionCount = properties.defaultSolutionCount();
 
         when(validator.validate(any())).thenReturn(Collections.emptySet());
-        when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
+        when(courseRepo.countByIdIn(validCourseIds)).thenReturn(validCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
-        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
-        var result = getProposals(givenCourseIds, defaultSolutionCount);
+        when(courseGroupRepo.getGroupedByCourseIn(validCourseIds)).thenReturn(Collections.emptyList());
+        when(search.greedySearch(any(), eq(validSolutionCount), any())).thenReturn(validProposalsWithSize(validSolutionCount));
+        var result = getProposals(validCourseIds, properties.defaultSolutionCount());
 
-        assertThat(result).hasSize(expectedSolutionCount);
+        assertThat(result).hasSize(validSolutionCount);
     }
 
 
@@ -85,19 +90,28 @@ public class ClassScheduleServiceTest {
     // #####################
 
     @Test
+    public void givenNullAsCourseIds_whenGetProposalsIsCalled_thenErrorIsThrown() {
+        Exception raisedException = catchException(() -> getProposals(null, properties.defaultSolutionCount()));
+
+        assertThat(raisedException).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     public void givenNoCourseIds_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
-        var given = Collections.<Long>emptyList();
-        var result = getProposals(given, defaultSolutionCount);
+        var noCourseIds = Collections.<Long>emptyList();
+
+        var result = getProposals(noCourseIds, properties.defaultSolutionCount());
+
         assertThat(result).isEmpty();
     }
 
     @Test
     public void givenCourseIdsContainingNull_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var givenCourseIds = Arrays.asList(1L, null, 3L, 4L, 5L);
-        var contract = new ProposalsContract(givenCourseIds, defaultSolutionCount, properties);
+        var courseIdsContainingNull = Arrays.asList(1L, null, 3L, 4L, 5L);
+        var contract = new ProposalsContract(courseIdsContainingNull, properties.defaultSolutionCount(), properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
-        Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
+        Exception raisedException = catchException(() -> getProposals(courseIdsContainingNull, properties.defaultSolutionCount()));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
         var constraintViolations = ((ConstraintViolationException)raisedException).getConstraintViolations();
@@ -107,11 +121,11 @@ public class ClassScheduleServiceTest {
 
     @Test
     public void givenMoreCourseIdsThanMaximum_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var givenCourseIds = LongStream.rangeClosed(0, properties.maxCourseIdsSize()).boxed().toList();
-        var contract = new ProposalsContract(givenCourseIds, defaultSolutionCount, properties);
+        var moreCourseIdsThanMax = LongStream.rangeClosed(0, properties.maxCourseIdsSize()).boxed().toList();
+        var contract = new ProposalsContract(moreCourseIdsThanMax, properties.defaultSolutionCount(), properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
-        Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
+        Exception raisedException = catchException(() -> getProposals(moreCourseIdsThanMax, properties.defaultSolutionCount()));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
         var constraintViolations = ((ConstraintViolationException)raisedException).getConstraintViolations();
@@ -121,11 +135,11 @@ public class ClassScheduleServiceTest {
 
     @Test
     public void givenDuplicateCourseIds_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var givenCourseIds = Arrays.asList(81L, 7L, 9L, 4L, 4L);
-        var contract = new ProposalsContract(givenCourseIds, defaultSolutionCount, properties);
+        var duplicateCourseIds = Arrays.asList(81L, 7L, 9L, 4L, 4L);
+        var contract = new ProposalsContract(duplicateCourseIds, properties.defaultSolutionCount(), properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
-        Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
+        Exception raisedException = catchException(() -> getProposals(duplicateCourseIds, properties.defaultSolutionCount()));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
         var constraintViolations = ((ConstraintViolationException)raisedException).getConstraintViolations();
@@ -135,9 +149,11 @@ public class ClassScheduleServiceTest {
 
     @Test
     public void givenOneOrMoreNonexistentCourseIds_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var givenCourseIds = Arrays.asList(2L, 5L, 7L, 11L, 3L, 4L);
-        when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(5);
-        Exception raisedException = catchException(() -> getProposals(givenCourseIds, defaultSolutionCount));
+        var courseIdsContainingNonexistent = Arrays.asList(2L, 5L, 7L, 11L, 3L, 4L);
+
+        when(courseRepo.countByIdIn(courseIdsContainingNonexistent)).thenReturn(5);
+        Exception raisedException = catchException(() -> getProposals(courseIdsContainingNonexistent, properties.defaultSolutionCount()));
+
         assertThat(raisedException).isInstanceOf(NotFoundException.class)
                 .extracting("resourceName")
                 .isEqualTo("courseIds");
@@ -149,20 +165,22 @@ public class ClassScheduleServiceTest {
     // #########################
 
     @Test
-    public void givenSolutionCountOfZero_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
-        var givenCourseIds = Arrays.asList(1L, 2L);
-        var result = getProposals(givenCourseIds, 0);
-        assertThat(result).isEmpty();
+    public void givenNullSolutionCount_whenGetProposalsIsCalled_thenErrorIsThrown() {
+        var validCourseIds = Arrays.asList(1L, 2L);
+
+        Exception raisedException = catchException(() -> getProposals(validCourseIds, null));
+
+        assertThat(raisedException).isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    public void givenNegativeSolutionCount_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var givenCourseIds = Arrays.asList(1L, 2L);
-        var givenSolutionCount = -1;
-        var contract = new ProposalsContract(givenCourseIds, givenSolutionCount, properties);
+    public void givenSolutionCountSmallerThanMinusOne_whenGetProposalsIsCalled_thenErrorIsThrown() {
+        var validCourseIds = Arrays.asList(1L, 2L);
+        var tooSmallSolutionCount = -2;
+        var invalidContract = new ProposalsContract(validCourseIds, tooSmallSolutionCount, properties);
 
-        when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));
-        Exception raisedException = catchException(() -> getProposals(givenCourseIds, givenSolutionCount));
+        when(validator.validate(invalidContract)).thenReturn(validatorValidation.validate(invalidContract));
+        Exception raisedException = catchException(() -> getProposals(validCourseIds, tooSmallSolutionCount));
 
         assertThat(raisedException).isInstanceOf(ConstraintViolationException.class);
         var constraintViolations = ((ConstraintViolationException)raisedException).getConstraintViolations();
@@ -170,28 +188,29 @@ public class ClassScheduleServiceTest {
         assertThat(constraintViolations).extracting("propertyPath").asString().contains("solutionCount");
     }
 
-    private ClassScheduleProposal buildProposal(int overlapCount) {
-        return new ClassScheduleProposal(overlapCount, new ArrayList<>());
-    }
-
-    private List<ClassScheduleProposal> givenProposals(int expectedSolutionCount) {
-        return IntStream.range(0, expectedSolutionCount).mapToObj(this::buildProposal).toList();
-    }
-
     @Test
-    public void givenNullSolutionCount_whenGetProposalsIsCalled_thenDefaultIsReturned() {
-        var givenCourseIds = Arrays.asList(1L, 2L);
-        Integer givenSolutionCount = null;
+    public void givenSolutionCountOfMinusOne_whenGetProposalsIsCalled_thenDefaultIsReturned() {
+        var validCourseIds = Arrays.asList(1L, 2L);
+        var givenSolutionCount = -1;
         var expectedSolutionCount = properties.defaultSolutionCount();
 
         when(validator.validate(any())).thenReturn(Collections.emptySet());
-        when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
+        when(courseRepo.countByIdIn(validCourseIds)).thenReturn(validCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
-        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
-        var result = getProposals(givenCourseIds, givenSolutionCount);
+        when(courseGroupRepo.getGroupedByCourseIn(validCourseIds)).thenReturn(Collections.emptyList());
+        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(validProposalsWithSize(expectedSolutionCount));
+        var result = getProposals(validCourseIds, givenSolutionCount);
 
         assertThat(result).hasSize(expectedSolutionCount);
+    }
+
+    @Test
+    public void givenSolutionCountOfZero_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
+        var validCourseIds = Arrays.asList(1L, 2L);
+
+        var result = getProposals(validCourseIds, 0);
+
+        assertThat(result).isEmpty();
     }
 
     @Test
@@ -204,7 +223,7 @@ public class ClassScheduleServiceTest {
         when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
         when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
-        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(givenProposals(expectedSolutionCount));
+        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(validProposalsWithSize(expectedSolutionCount));
         var result = getProposals(givenCourseIds, givenSolutionCount);
 
         assertThat(result).hasSize(expectedSolutionCount);

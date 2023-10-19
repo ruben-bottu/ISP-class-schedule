@@ -54,8 +54,7 @@ public class ClassScheduleRestController {
     }
 
     @GetMapping("proposals/{courseIds}")
-    public List<ClassScheduleProposal> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", required = false) Integer solutionCount) {
-        // solutionCount may be null!
+    public List<ClassScheduleProposal> proposals(@PathVariable List<Long> courseIds, @RequestParam(name = "count", defaultValue = "-1") int solutionCount) {
         var contract = new ProposalsContract(courseIds, solutionCount, properties);
         return service.getProposals(contract);
     }

@@ -8,10 +8,17 @@ import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.CourseRep
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.class_.ClassRepository;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroup;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course_group.CourseGroupRepository;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.MaxSize;
+import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.NoDuplicates;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.executable.ExecutableValidator;
 
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +47,23 @@ public class ClassScheduleService {
         return courseRepo.getAll();
     }
 
-    public List<ClassSummary> getClassesByCourseGroupIdIn(List<Long> courseGroupIds) {
+    // TODO limit number of courseGroupIds
+    // TODO refactor method
+    public List<ClassSummary> getClassesByCourseGroupIdIn(@MaxSize @NoDuplicates List<@NotNull Long> courseGroupIds) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        ExecutableValidator executableValidator = factory.getValidator().forExecutables();
+        var object = new ClassScheduleService(null, null, null, null, null);
+
+        try {
+            Method method = ClassScheduleService.class.getMethod("getClassesByCourseGroupIdIn", List.class);
+            Object[] parameterValues = { courseGroupIds };
+            var violations = executableValidator.validateParameters(object, method, parameterValues);
+            if (!violations.isEmpty()) {
+                throw new ConstraintViolationException("Invalid course group IDs", violations);
+            }
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
         return classRepo.getByCourseGroupIdIn(courseGroupIds);
     }
 
