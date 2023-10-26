@@ -41,8 +41,15 @@ public class ClassScheduleServiceTest {
     private Search search;
     @InjectMocks
     private ClassScheduleService service;
+
+    // Since it is difficult to manually instantiate ConstraintViolations,
+    // we use a Validator instance that creates them for us
     private static Validator validatorValidation;
     private static ClassScheduleProperties properties;
+
+    private static ClassScheduleProperties createClassScheduleProperties() {
+        return new ClassScheduleProperties(10, 20, 30);
+    }
 
     @BeforeClass
     public static void setup() {
@@ -50,10 +57,6 @@ public class ClassScheduleServiceTest {
         validatorValidation = factory.getValidator();
         properties = createClassScheduleProperties();
         MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
-    }
-
-    private static ClassScheduleProperties createClassScheduleProperties() {
-        return new ClassScheduleProperties(10, 20, 30);
     }
 
     private List<ClassScheduleProposal> getProposals(List<Long> courseIds, Integer solutionCount) {
@@ -69,6 +72,8 @@ public class ClassScheduleServiceTest {
         return IntStream.range(0, expectedSolutionCount).mapToObj(this::buildProposal).toList();
     }
 
+    // TODO split tests into multiple files
+    // TODO use object mother pattern
     @Test
     public void givenValidCourseIdsAndSolutionCount_whenGetProposalsIsCalled_thenProposalsAreReturned() {
         var validCourseIds = Arrays.asList(1L, 2L);
@@ -96,6 +101,7 @@ public class ClassScheduleServiceTest {
         assertThat(raisedException).isInstanceOf(NullPointerException.class);
     }
 
+    // TODO here empty list is returned and in controller exception is thrown
     @Test
     public void givenNoCourseIds_whenGetProposalsIsCalled_thenEmptyListIsReturned() {
         var noCourseIds = Collections.<Long>emptyList();
@@ -191,17 +197,16 @@ public class ClassScheduleServiceTest {
     @Test
     public void givenSolutionCountOfMinusOne_whenGetProposalsIsCalled_thenDefaultIsReturned() {
         var validCourseIds = Arrays.asList(1L, 2L);
-        var givenSolutionCount = -1;
-        var expectedSolutionCount = properties.defaultSolutionCount();
+        var defaultSolutionCount = properties.defaultSolutionCount();
 
         when(validator.validate(any())).thenReturn(Collections.emptySet());
         when(courseRepo.countByIdIn(validCourseIds)).thenReturn(validCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
         when(courseGroupRepo.getGroupedByCourseIn(validCourseIds)).thenReturn(Collections.emptyList());
-        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(validProposalsWithSize(expectedSolutionCount));
-        var result = getProposals(validCourseIds, givenSolutionCount);
+        when(search.greedySearch(any(), eq(defaultSolutionCount), any())).thenReturn(validProposalsWithSize(defaultSolutionCount));
+        var result = getProposals(validCourseIds, -1);
 
-        assertThat(result).hasSize(expectedSolutionCount);
+        assertThat(result).hasSize(defaultSolutionCount);
     }
 
     @Test
@@ -215,17 +220,16 @@ public class ClassScheduleServiceTest {
 
     @Test
     public void givenSolutionCountBiggerThanMaximum_whenGetProposalsIsCalled_thenMaximumIsReturned() {
-        var givenCourseIds = Arrays.asList(1L, 2L);
-        var givenSolutionCount = properties.maxSolutionCount() + 1;
-        var expectedSolutionCount = properties.maxSolutionCount();
+        var validCourseIds = Arrays.asList(1L, 2L);
+        var maxSolutionCount = properties.maxSolutionCount();
 
         when(validator.validate(any())).thenReturn(Collections.emptySet());
-        when(courseRepo.countByIdIn(givenCourseIds)).thenReturn(givenCourseIds.size());
+        when(courseRepo.countByIdIn(validCourseIds)).thenReturn(validCourseIds.size());
         // In reality a list with the given Courses and their corresponding ClassGroups would be returned
-        when(courseGroupRepo.getGroupedByCourseIn(givenCourseIds)).thenReturn(Collections.emptyList());
-        when(search.greedySearch(any(), eq(expectedSolutionCount), any())).thenReturn(validProposalsWithSize(expectedSolutionCount));
-        var result = getProposals(givenCourseIds, givenSolutionCount);
+        when(courseGroupRepo.getGroupedByCourseIn(validCourseIds)).thenReturn(Collections.emptyList());
+        when(search.greedySearch(any(), eq(maxSolutionCount), any())).thenReturn(validProposalsWithSize(maxSolutionCount));
+        var result = getProposals(validCourseIds, maxSolutionCount + 1);
 
-        assertThat(result).hasSize(expectedSolutionCount);
+        assertThat(result).hasSize(maxSolutionCount);
     }
 }

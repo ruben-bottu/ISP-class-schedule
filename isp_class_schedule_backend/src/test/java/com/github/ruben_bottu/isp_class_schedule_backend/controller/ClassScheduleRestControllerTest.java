@@ -2,7 +2,6 @@ package com.github.ruben_bottu.isp_class_schedule_backend.controller;
 
 import com.github.ruben_bottu.isp_class_schedule_backend.ClassScheduleConfigurationProperties;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.ClassScheduleService;
-import com.github.ruben_bottu.isp_class_schedule_backend.domain.Group;
 import com.github.ruben_bottu.isp_class_schedule_backend.domain.course.Course;
 import org.hamcrest.core.Is;
 import org.junit.Before;
@@ -42,7 +41,6 @@ public class ClassScheduleRestControllerTest {
     @Autowired
     private MockMvc classScheduleRestController;
     private Course algo, web1, bop, data1, testing;
-    private Group oneTi1, oneTi2, oneTi3, twoTi5;
 
     @Before
     public void setUp() {
@@ -51,13 +49,9 @@ public class ClassScheduleRestControllerTest {
         bop = new Course(3L, "BOP");
         data1 = new Course(4L, "Data 1");
         testing = new Course(5L, "Testing");
-
-        oneTi1 = new Group(1L, "ME-1TI/1");
-        oneTi2 = new Group(2L, "ME-1TI/2");
-        oneTi3 = new Group(3L, "ME-1TI/3");
-        twoTi5 = new Group(4L, "ME-2TI/5");
     }
 
+    // TODO use object mother pattern
     @Test
     public void givenCourses_whenGetRequestForAllCourses_thenJsonWithAllCoursesIsReturned() throws Exception {
         var given = Arrays.asList(algo, web1, bop, data1, testing);
@@ -82,9 +76,8 @@ public class ClassScheduleRestControllerTest {
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
-    // The default value is used instead of the incorrect Query Parameter
     @Test
-    public void givenInvalidQueryParameter_whenGetRequestForProposals_thenStatus200OkIsReturned() throws Exception {
+    public void givenInvalidQueryParameter_whenGetRequestForProposals_thenJsonWithDefaultValueIsReturned() throws Exception {
         var validCourseIds = Stream.of(algo, web1, bop).map(Course::id).map(id -> Long.toString(id)).collect(Collectors.joining(","));
         var validCount = "5";
         classScheduleRestController.perform(get(CLASS_SCHEDULE_PATH + PROPOSALS_PATH + "/" + validCourseIds + "?limit=" + validCount))
