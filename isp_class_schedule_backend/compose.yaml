@@ -14,7 +14,7 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=t
     volumes:
-      - ./db/secret-load.sql:/app/src/main/resources/init-data/load.sql
+      - ./secret-load.sql:/app/src/main/resources/init-data/load.sql
     depends_on:
       db:
         condition: service_healthy

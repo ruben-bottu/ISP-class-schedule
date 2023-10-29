@@ -34,5 +34,5 @@ build/
 ### VS Code ###
 .vscode/
 
-### Docker ###
-db/
+### Secret Data ###
+secret-load.sql
