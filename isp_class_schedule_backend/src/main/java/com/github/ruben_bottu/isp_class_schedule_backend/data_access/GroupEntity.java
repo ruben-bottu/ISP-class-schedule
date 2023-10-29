@@ -6,8 +6,11 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
+/**
+ * The table name group_ has an underscore to avoid conflict with the reserved keyword GROUP
+ */
 @Entity
-@Table(name = "group")
+@Table(name = "group_")
 public class GroupEntity {
 
     @Id

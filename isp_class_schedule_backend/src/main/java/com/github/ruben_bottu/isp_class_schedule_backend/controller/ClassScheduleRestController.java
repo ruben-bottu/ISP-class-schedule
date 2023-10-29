@@ -38,6 +38,7 @@ public class ClassScheduleRestController {
         return service.getCombinationsWithCollisionCountJson(resultLimit, courseIds);
     }
 
+    // TODO Controller should only return DTO's!
     @GetMapping("/courses")
     public List<Course> allCourses() {
         return service.getAllCourses();

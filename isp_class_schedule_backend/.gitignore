@@ -36,6 +36,3 @@ build/
 
 ### Docker ###
 db/
-
-### Data ###
-load.sql

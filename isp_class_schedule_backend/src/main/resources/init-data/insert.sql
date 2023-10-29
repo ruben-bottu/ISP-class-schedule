@@ -2,8 +2,8 @@
 ALTER TABLE course
     ALTER COLUMN id SET DEFAULT nextval('course_seq');
 
-ALTER TABLE "group"
-    ALTER COLUMN id SET DEFAULT nextval('group_seq');
+ALTER TABLE group_
+    ALTER COLUMN id SET DEFAULT nextval('group__seq');
 
 ALTER TABLE course_group
     ALTER COLUMN id SET DEFAULT nextval('course_group_seq');
@@ -15,13 +15,13 @@ INSERT INTO course (name)
 SELECT DISTINCT course_name
 FROM init_data;
 
-INSERT INTO "group" (name)
+INSERT INTO group_ (name)
 SELECT DISTINCT group_name
 FROM init_data;
 
 INSERT INTO course_group (course_id, group_id)
 SELECT DISTINCT c.id, g.id
-FROM "group" g
+FROM group_ g
          INNER JOIN init_data t ON g.name = t.group_name
          INNER JOIN course c ON t.course_name = c.name;
 
@@ -31,11 +31,11 @@ FROM "group" g
 INSERT INTO class (start_timestamp, end_timestamp, course_group_id)
 SELECT DISTINCT start_timestamp, end_timestamp, cg.id
 FROM course_group cg
-         INNER JOIN "group" g ON cg.group_id = g.id
+         INNER JOIN group_ g ON cg.group_id = g.id
          INNER JOIN course c ON cg.course_id = c.id
          INNER JOIN init_data t ON g.name = t.group_name AND c.name = t.course_name;
 
-/*Using ANALYSE EXPLAIN in PostgreSQL
+/* TODO Using ANALYSE EXPLAIN in PostgreSQL
 
 Queries without temp table:
     course_group:       Insert on course_group  (cost=30.83..33.03 rows=0 width=0)

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_HOST}:${DB_PORT}/${DB_NAME}?currentSchema=${DB_DEFAULT_SCHEMA}
+    url: ${DB_HOST}:${DB_PORT}/${DB_NAME}?createDatabaseIfNotExist=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -9,7 +9,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_schema: ${DB_DEFAULT_SCHEMA}
         integrator_provider: com.github.ruben_bottu.isp_class_schedule_backend.data_access.ClassImportIntegratorIntegratorProvider
         generate_statistics: true
     show-sql: true
