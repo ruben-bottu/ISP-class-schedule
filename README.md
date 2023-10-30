@@ -1,13 +1,13 @@
-# ISP Class Schedule
+# Class Scheduler
 
 This project is for students who are taking courses from multiple years or curricula and are struggling to put together a good Individual Study Program (ISP) or class schedule.
 
 ## Setup
 
-1. Load in the Spring Boot project isp_class_schedule_backend.
+1. Load in the Spring Boot project class_scheduler_backend.
 
 2. Create the following environment variables, they are needed for the database connection:
-   
+
    ```properties
    DB_HOST=jdbc:postgresql://localhost
    DB_PORT=5432

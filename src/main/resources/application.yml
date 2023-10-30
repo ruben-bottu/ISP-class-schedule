@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${DB_HOST}:${DB_PORT}/${DB_NAME}?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        integrator_provider: com.github.ruben_bottu.class_scheduler_backend.data_access.ClassImportIntegratorIntegratorProvider
+        generate_statistics: true
+    show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:init-data/setup.sql, classpath:init-data/load.sql, classpath:init-data/insert.sql
+
+logging:
+  level:
+    org.hibernate.sql: debug
+
+class-schedule:
+  default-solution-count: 10
+  max-solution-count: 20
+  max-course-ids-size: 30 # TODO rename to max-ids-size (max-ids-size is also misleading, makes people think that it is the max size of a single id, not max size of list of ids)
