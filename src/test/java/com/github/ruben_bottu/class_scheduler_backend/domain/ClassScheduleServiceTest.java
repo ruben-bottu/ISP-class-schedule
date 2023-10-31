@@ -8,7 +8,6 @@ import com.github.ruben_bottu.class_scheduler_backend.domain.validation.Proposal
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,10 +52,10 @@ public class ClassScheduleServiceTest {
 
     @BeforeClass
     public static void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory(); // TODO 'ValidatorFactory' used without 'try'-with-resources statement
+        var factory = Validation.buildDefaultValidatorFactory();
         validatorValidation = factory.getValidator();
         properties = createClassScheduleProperties();
-        MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
+        MaxSizeConstraintValidator.setMaxSize(properties.maxIdListSize());
     }
 
     private List<ClassScheduleProposal> getProposals(List<Long> courseIds, Integer solutionCount) {
@@ -127,7 +126,7 @@ public class ClassScheduleServiceTest {
 
     @Test
     public void givenMoreCourseIdsThanMaximum_whenGetProposalsIsCalled_thenErrorIsThrown() {
-        var moreCourseIdsThanMax = LongStream.rangeClosed(0, properties.maxCourseIdsSize()).boxed().toList();
+        var moreCourseIdsThanMax = LongStream.rangeClosed(0, properties.maxIdListSize()).boxed().toList();
         var contract = new ProposalsContract(moreCourseIdsThanMax, properties.defaultSolutionCount(), properties);
 
         when(validator.validate(contract)).thenReturn(validatorValidation.validate(contract));

@@ -25,4 +25,4 @@ logging:
 class-schedule:
   default-solution-count: 10
   max-solution-count: 20
-  max-course-ids-size: 30 # TODO rename to max-ids-size (max-ids-size is also misleading, makes people think that it is the max size of a single id, not max size of list of ids)
+  max-id-list-size: 30

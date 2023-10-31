@@ -6,6 +6,7 @@ import com.github.ruben_bottu.class_scheduler_backend.domain.*;
 import com.github.ruben_bottu.class_scheduler_backend.domain.class_.ClassSummary;
 import com.github.ruben_bottu.class_scheduler_backend.domain.course.Course;
 import com.github.ruben_bottu.class_scheduler_backend.domain.course_group.CourseGroup;
+import com.github.ruben_bottu.class_scheduler_backend.domain.validation.IdListContract;
 import com.github.ruben_bottu.class_scheduler_backend.domain.validation.MaxSizeConstraintValidator;
 import com.github.ruben_bottu.class_scheduler_backend.domain.validation.ProposalsContract;
 import jakarta.validation.ConstraintViolationException;
@@ -25,11 +26,11 @@ public class ClassScheduleRestController {
     public ClassScheduleRestController(ClassScheduleService service, ClassScheduleConfigurationProperties properties) {
         this.service = service;
         this.properties = mapToDomain(properties);
-        MaxSizeConstraintValidator.setMaxSize(properties.maxCourseIdsSize());
+        MaxSizeConstraintValidator.setMaxSize(properties.maxIdListSize());
     }
 
     private static ClassScheduleProperties mapToDomain(ClassScheduleConfigurationProperties properties) {
-        return new ClassScheduleProperties(properties.defaultSolutionCount(), properties.maxSolutionCount(), properties.maxCourseIdsSize());
+        return new ClassScheduleProperties(properties.defaultSolutionCount(), properties.maxSolutionCount(), properties.maxIdListSize());
     }
 
     private static CourseDTO mapToDto(Course c) {
@@ -64,7 +65,8 @@ public class ClassScheduleRestController {
 
     @GetMapping("/course-groups/{courseGroupIds}/classes")
     public List<ClassDTO> getClassesByCourseGroupIdIn(@PathVariable List<Long> courseGroupIds) {
-        return service.getClassesByCourseGroupIdIn(courseGroupIds).stream().map(ClassScheduleRestController::mapToDto).toList();
+        var contract = new IdListContract(courseGroupIds);
+        return service.getClassesByCourseGroupIdIn(contract).stream().map(ClassScheduleRestController::mapToDto).toList();
     }
 
     @GetMapping("search-tree")

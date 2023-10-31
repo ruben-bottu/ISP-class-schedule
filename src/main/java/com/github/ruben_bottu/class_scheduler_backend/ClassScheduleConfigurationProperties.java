@@ -10,5 +10,5 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public record ClassScheduleConfigurationProperties(@NotNull Integer defaultSolutionCount,
                                                    @NotNull Integer maxSolutionCount,
-                                                   @NotNull Integer maxCourseIdsSize) {
+                                                   @NotNull Integer maxIdListSize) {
 }

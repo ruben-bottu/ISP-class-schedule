@@ -16,8 +16,19 @@ import java.util.Map;
 @Component
 public class CourseGroupRepositoryImpl implements CourseGroupRepository {
 
+    private final JpaCourseGroupRepository jpaCourseGroupRepo;
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    public CourseGroupRepositoryImpl(JpaCourseGroupRepository jpaCourseGroupRepo) {
+        this.jpaCourseGroupRepo = jpaCourseGroupRepo;
+    }
+
+    @Override
+    public int countByIdIn(List<Long> courseGroupIds) {
+        return jpaCourseGroupRepo.countByIdIn(courseGroupIds);
+    }
 
     @Override
     public List<List<CourseGroup>> getGroupedByCourseIn(List<Long> courseIds) {

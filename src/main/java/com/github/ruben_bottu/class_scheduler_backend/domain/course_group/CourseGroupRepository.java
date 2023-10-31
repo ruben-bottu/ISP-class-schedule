@@ -5,4 +5,6 @@ import java.util.List;
 public interface CourseGroupRepository {
 
     List<List<CourseGroup>> getGroupedByCourseIn(List<Long> courseIds);
+
+    int countByIdIn(List<Long> courseGroupIds);
 }

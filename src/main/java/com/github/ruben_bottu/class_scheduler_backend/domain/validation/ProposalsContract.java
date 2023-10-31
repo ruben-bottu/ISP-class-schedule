@@ -17,7 +17,7 @@ public record ProposalsContract(@MaxSize @NoDuplicates List<@NotNull Long> cours
                                 @PositiveOrZero int solutionCount, ClassScheduleProperties properties) {
 
     public ProposalsContract {
-        // -1 is interpreted as the "empty" value here, so it receives the default
+        // -1 is interpreted as the "empty" value here, so solutionCount is set to default
         solutionCount = (solutionCount == -1)
                 ? properties.defaultSolutionCount()
                 : Math.min(solutionCount, properties.maxSolutionCount());
