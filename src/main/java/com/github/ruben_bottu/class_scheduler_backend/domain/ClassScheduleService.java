@@ -34,6 +34,7 @@ public class ClassScheduleService {
         this.search = search;
     }
 
+    // Legacy proposals method
     public String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds) {
         return classRepo.getCombinationsWithCollisionCountJson(rowLimit, courseIds);
     }
@@ -42,6 +43,7 @@ public class ClassScheduleService {
         return courseRepo.getAll();
     }
 
+    // TODO refactor
     public String searchTreeToString() {
         var courseGroupsGroupedByCourse = courseGroupRepo.getGroupedByCourseIn(List.of(1L, 101L, 151L, 201L));
         courseGroupsGroupedByCourse.sort((lst1, lst2) -> (int) (lst1.get(0).course().id() - lst2.get(0).course().id()));
@@ -113,5 +115,9 @@ public class ClassScheduleService {
         var algorithmState = new State(courseGroups);
         return search.greedySearch(algorithmState, solutionCount, this::countOverlaps);
         // return search.greedySearchMemory(algorithmState, solutionCount, this::countOverlapsBetween);
+    }
+
+    public int countWeeksIn(List<Long> courseIds) {
+        return classRepo.countWeeksIn(courseIds);
     }
 }

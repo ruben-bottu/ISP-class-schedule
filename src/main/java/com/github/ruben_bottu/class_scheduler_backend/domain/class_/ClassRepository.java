@@ -8,6 +8,7 @@ public interface ClassRepository {
 
     int countWeeksIn(List<Long> courseIds);
 
+    // Legacy proposals method
     String getCombinationsWithCollisionCountJson(int rowLimit, List<Long> courseIds);
 
     int countOverlaps(List<Long> courseGroupIds);

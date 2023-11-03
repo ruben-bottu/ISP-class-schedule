@@ -72,6 +72,7 @@ public class ClassScheduleServiceTest {
     }
 
     // TODO split tests into multiple files
+    // TODO write tests for getClassesByCourseGroupIdIn
     // TODO use object mother pattern
     @Test
     public void givenValidCourseIdsAndSolutionCount_whenGetProposalsIsCalled_thenProposalsAreReturned() {

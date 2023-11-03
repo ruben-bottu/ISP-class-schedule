@@ -35,7 +35,7 @@ FROM course_group cg
          INNER JOIN course c ON cg.course_id = c.id
          INNER JOIN init_data t ON g.name = t.group_name AND c.name = t.course_name;
 
-/* TODO Using ANALYSE EXPLAIN in PostgreSQL
+/* Performance results using ANALYSE EXPLAIN in PostgreSQL:
 
 Queries without temp table:
     course_group:       Insert on course_group  (cost=30.83..33.03 rows=0 width=0)
