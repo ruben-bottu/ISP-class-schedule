@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   backend:
     build:
@@ -19,7 +19,7 @@ services:
       db:
         condition: service_healthy
   db:
-    image: postgres
+    image: postgres:16-bookworm
     restart: always
     user: postgres
     volumes:
@@ -30,7 +30,7 @@ services:
     expose:
       - 5432
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
