@@ -1,4 +1,4 @@
-# Class Scheduler
+# Class Scheduler Backend
 
 This project is for students who are taking courses from multiple years or curricula and are struggling to put together a good Individual Study Program (ISP) or class schedule.
 
@@ -37,14 +37,17 @@ This project is for students who are taking courses from multiple years or curri
    in your terminal. This will launch all the necessary Docker Containers and print their logs in the terminal.
 
 4. Wait until you see the line
+
    ```
    Started ClassSchedulerBackendApplication in X seconds (process running for X)
    ```
+
    printed in the terminal. You should now be able to send GET requests to:
-   ```http
-   http://localhost:8080/api/class-schedule/courses
-   ```
+
+   <http://localhost:8080/api/class-schedule/courses>
+
    and receive a response similar to the following:
+
    ```json
    [
      {
@@ -69,6 +72,8 @@ This project is for students who are taking courses from multiple years or curri
      }
    ]
    ```
+
+If you completed these steps, then your backend is running smoothly.
 
 ## Explanation
 
