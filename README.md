@@ -85,7 +85,7 @@ If you completed these steps, then your backend is running smoothly.
 
 Get proposals for the given courses.
 Example usage:
-<http://localhost:8080/api/class-schedule/proposals/1,51>
+<http://localhost:8080/api/class-schedule/proposals/1,51?count=2>
 
 #### Path Variables
 
