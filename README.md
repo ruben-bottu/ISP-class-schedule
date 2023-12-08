@@ -176,9 +176,27 @@ If nonexistent course IDs are given.
 
 ## Explanation
 
-- Which SQL dialect are you using?
+### Nullability
 
-  > ISO SQL is used whenever possible. This is to ensure easy portability to other SQL dialects with minimal changes. Any deviations from this rule are indicated by a comment.
+The `null` value is never used in our code. This is because Java is incapable of handling this edge case at compile time, thus resulting in NullPointerExceptions at runtime that are very hard to debug. As alternatives to `null`, Optional and empty Collections are used. The only exceptions are null checks like `if (o == null) ...` and tests. These tests will check our code's robustness against attacks from `null` values.
+
+### The Independent Domain
+
+Our domain is fully framework independent. In practice this means that our domain only consists of pure Java code. Any and all Spring Boot or Hibernate Persistence annotations, classes and interfaces only exist outside of the domain. The only dependencies that the domain has are libraries like Hibernate Validator, which are entirely separate from their framework.
+
+### Which SQL Dialect Are You Using?
+
+ISO SQL is used whenever possible. This is to ensure easy portability to other SQL dialects with minimal changes. Any deviations from this rule are indicated by a comment.
+
+### Relational Diagram
+
+Below are the database tables and relations represented in a relational model. These are the meanings:
+
+- A trident means `many`.
+- An empty circle means `zero`.
+- A perpendicular line means `one`.
+
+![Relational diagram of class schedule](./docs/Relational%20Diagram.png)
 
 ## License
 
