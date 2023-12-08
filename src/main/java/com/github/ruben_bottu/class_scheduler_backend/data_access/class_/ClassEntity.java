@@ -1,4 +1,4 @@
-package com.github.ruben_bottu.class_scheduler_backend.data_access.class_;
+package com.github.ruben_bottu.class_scheduler_backend.data_access.class;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.github.ruben_bottu.class_scheduler_backend.data_access.course_group.CourseGroupEntity;

@@ -36,7 +36,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Hibernate-validator is entirely separate from Hibernate persistence -->
+        <!-- Hibernate Validator is entirely separate from Hibernate Persistence -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
