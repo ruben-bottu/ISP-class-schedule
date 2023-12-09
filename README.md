@@ -2,6 +2,15 @@
 
 This project is for students who are taking courses from multiple years or curricula and are struggling to put together a good class schedule.
 
+## Table of Contents
+
+- [**Tutorial**](#tutorial)
+- [**Rest API**](#rest-api)
+  - [**Proposals**](#get-apiclass-scheduleproposalscourseidscountnumber)
+  - [**Courses**](#get-apiclass-schedulecourses)
+  - [**Classes of Course Groups**](#get-apiclass-schedulecourse-groupscoursegroupidsclasses)
+- [**Explanation**](#explanation)
+
 ## Tutorial
 
 1. [Install Docker Desktop.](https://docs.docker.com/get-docker/)
@@ -40,6 +49,8 @@ This project is for students who are taking courses from multiple years or curri
 
    in your terminal. This will launch all the necessary Docker Containers and print their logs in the terminal.
 
+   > Note: if you are getting `permission denied` in Linux, use `sudo docker compose up`
+
 6. Wait until you see the line
 
    ```
@@ -54,26 +65,26 @@ This project is for students who are taking courses from multiple years or curri
 
    ```json
    [
-     {
-       "id": 1,
-       "name": "Design"
-     },
-     {
-       "id": 51,
-       "name": "Computer Systems"
-     },
-     {
-       "id": 101,
-       "name": "Web Development"
-     },
-     {
-       "id": 151,
-       "name": "Spaceship Technologies"
-     },
-     {
-       "id": 201,
-       "name": "Mobile Applications"
-     }
+       {
+           "id": 1,
+           "name": "Design"
+       },
+       {
+           "id": 51,
+           "name": "Computer Systems"
+       },
+       {
+           "id": 101,
+           "name": "Web Development"
+       },
+       {
+           "id": 151,
+           "name": "Spaceship Technologies"
+       },
+       {
+           "id": 201,
+           "name": "Mobile Applications"
+       }
    ]
    ```
 
@@ -81,7 +92,7 @@ If you completed these steps, then your backend is running smoothly.
 
 ## REST API
 
-### GET /api/class-schedule/proposals/`:courseIds`?count=`number`
+### GET /api/class-schedule/proposals/`courseIds`?count=`number`
 
 Get proposals for the given courses.
 Example usage:
@@ -103,92 +114,174 @@ Returns `count` number of proposals for the given courses.
 
 ```json
 [
-  {
-    "averageWeeklyOverlapCount": "0",
-    "combination": [
-      {
-        "id": 351,
-        "course": {
-          "id": 1,
-          "name": "Design"
-        },
-        "group": {
-          "id": 101,
-          "name": "Y2G1"
-        }
-      },
-      {
-        "id": 51,
-        "course": {
-          "id": 51,
-          "name": "Computer Systems"
-        },
-        "group": {
-          "id": 1,
-          "name": "Y1G1"
-        }
-      }
-    ]
-  },
-  {
-    "averageWeeklyOverlapCount": "0",
-    "combination": [
-      {
-        "id": 351,
-        "course": {
-          "id": 1,
-          "name": "Design"
-        },
-        "group": {
-          "id": 101,
-          "name": "Y2G1"
-        }
-      },
-      {
-        "id": 451,
-        "course": {
-          "id": 51,
-          "name": "Computer Systems"
-        },
-        "group": {
-          "id": 151,
-          "name": "Y1G3"
-        }
-      }
-    ]
-  }
+    {
+        "averageWeeklyOverlapCount": "0",
+        "combination": [
+            {
+                "id": 351,
+                "course": {
+                    "id": 1,
+                    "name": "Design"
+                },
+                "group": {
+                    "id": 101,
+                    "name": "Y2G1"
+                }
+            },
+            {
+                "id": 51,
+                "course": {
+                    "id": 51,
+                    "name": "Computer Systems"
+                },
+                "group": {
+                    "id": 1,
+                    "name": "Y1G1"
+                }
+            }
+        ]
+    },
+    {
+        "averageWeeklyOverlapCount": "0",
+        "combination": [
+            {
+                "id": 351,
+                "course": {
+                    "id": 1,
+                    "name": "Design"
+                },
+                "group": {
+                    "id": 101,
+                    "name": "Y2G1"
+                }
+            },
+            {
+                "id": 451,
+                "course": {
+                    "id": 51,
+                    "name": "Computer Systems"
+                },
+                "group": {
+                    "id": 151,
+                    "name": "Y1G3"
+                }
+            }
+        ]
+    }
 ]
 ```
 
+##### 400 Bad Request
+
+- If duplicate course IDs are given.
+- If empty course IDs are given.
+- If negative `count` is given.
+
 ##### 401 Unauthorized
 
-If no course IDs are given.
+- If no course IDs are given.
+- If invalid course IDs are given.
+- If invalid `count` is given.
 
 ##### 404 Not Found
 
-If nonexistent course IDs are given.
+- If nonexistent course IDs are given.
+
+### GET /api/class-schedule/courses
+
+Get all courses.
+
+#### Response
+
+##### 200 OK
+
+Returns all courses.
 
 ```json
-{
-  "courseIds": "Course IDs don't exist"
-}
+[
+    {
+        "id": 1,
+        "name": "Design"
+    },
+    {
+        "id": 51,
+        "name": "Computer Systems"
+    },
+    {
+        "id": 101,
+        "name": "Web Development"
+    },
+    {
+        "id": 151,
+        "name": "Spaceship Technologies"
+    },
+    {
+        "id": 201,
+        "name": "Mobile Applications"
+    }
+]
 ```
+
+### GET /api/class-schedule/course-groups/`courseGroupIds`/classes
+
+Get all classes of the given course groups.
+
+#### Path Variables
+
+- `courseGroupIds`: a comma-separated list of course group IDs in the format `courseGroupId1,courseGroupId2,courseGroupId3`.
+
+#### Response
+
+##### 200 OK
+
+Returns all classes of the given course groups.
+
+```json
+[
+    {
+        "startTimestamp": "2022-06-26T10:00:00",
+        "endTimestamp": "2022-06-26T12:00:00",
+        "courseName": "Design",
+        "groupName": "Y2G1"
+    },
+    {
+        "startTimestamp": "2022-06-26T08:00:00",
+        "endTimestamp": "2022-06-26T10:00:00",
+        "courseName": "Computer Systems",
+        "groupName": "Y1G1"
+    }
+]
+```
+
+##### 400 Bad Request
+
+- If duplicate course group IDs are given.
+- If empty course group IDs are given.
+
+##### 401 Unauthorized
+
+- If no course group IDs are given.
+- If invalid course group IDs are given.
+
+##### 404 Not Found
+
+- If nonexistent course group IDs are given.
 
 ## Explanation
 
 ### Nullability
 
-The `null` value is never used in our code. This is because Java is incapable of handling this edge case at compile time, thus resulting in NullPointerExceptions at runtime that are very hard to debug. As alternatives to `null`, Optional and empty Collections are used. The only exceptions are null checks like `if (o == null) ...` and tests. These tests will check our code's robustness against attacks from `null` values.
+The `null` value is never used in our code. This is because Java is incapable of handling this edge case at compile time, thus resulting in NullPointerExceptions at runtime that are very hard to debug. As alternatives to `null`, Optional and empty Collections are used. The only exceptions to this rule are null checks like `if (o == null) ...` and tests. These tests will check our code's robustness against attacks from `null` values.
 
 ### The Independent Domain
 
-Our domain is fully framework independent. In practice this means that our domain only consists of pure Java code. Any and all Spring Boot or Hibernate Persistence annotations, classes and interfaces only exist outside of the domain. The only dependencies that the domain has are libraries like Hibernate Validator, which are entirely separate from their framework.
+Our domain is fully framework independent. In practice this means that our domain only consists of pure Java code. Any and all Spring Boot or Hibernate Persistence annotations, classes and interfaces only exist outside the domain. The only dependencies that the domain has, are framework independent libraries like Hibernate Validator.
 
 ### Which SQL Dialect Are You Using?
 
 ISO SQL is used whenever possible. This is to ensure easy portability to other SQL dialects with minimal changes. Any deviations from this rule are indicated by a comment.
 
-### Relational Diagram
+### The Relational Diagram
 
 Below are the database tables and relations represented in a relational model. These are the meanings:
 
